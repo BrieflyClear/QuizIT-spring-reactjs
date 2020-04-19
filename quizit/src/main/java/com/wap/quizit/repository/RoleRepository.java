@@ -1,9 +1,9 @@
 package com.wap.quizit.repository;
 
-import com.wap.quizit.model.QuizCategory;
+import com.wap.quizit.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface QuizCategoryRepository extends JpaRepository<QuizCategory, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 }
