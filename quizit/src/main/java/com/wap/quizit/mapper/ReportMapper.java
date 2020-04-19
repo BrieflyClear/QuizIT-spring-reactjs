@@ -13,8 +13,12 @@ import org.mapstruct.Mapping;
 public interface ReportMapper {
 
   @Mapping(target="issuedTime", source = "issuedTime", dateFormat = "dd-MM-yyyy HH:mm:ss")
+  @Mapping(target = "reportedQuiz", source = "entity.reportedQuiz.id")
+  @Mapping(target = "reportingUser", source = "entity.reportingUser.id")
   ReportDTO map(Report entity);
 
   @Mapping(target="issuedTime", source = "issuedTime", dateFormat = "dd-MM-yyyy HH:mm:ss")
+  @Mapping(target = "reportedQuiz", ignore = true)
+  @Mapping(target = "reportingUser", ignore = true)
   Report map(ReportDTO dto);
 }

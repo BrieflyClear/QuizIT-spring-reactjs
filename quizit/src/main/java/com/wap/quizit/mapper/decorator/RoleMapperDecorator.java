@@ -3,21 +3,18 @@ package com.wap.quizit.mapper.decorator;
 import com.wap.quizit.dto.RoleDTO;
 import com.wap.quizit.mapper.RoleMapper;
 import com.wap.quizit.model.Role;
-import com.wap.quizit.model.User;
 import com.wap.quizit.service.RoleService;
-import com.wap.quizit.service.QuizService;
-import com.wap.quizit.service.UserService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
-import java.util.Set;
 
-@AllArgsConstructor
 public abstract class RoleMapperDecorator implements RoleMapper {
 
+  @Autowired
   @Qualifier("delegate")
   private RoleMapper delegate;
+  @Autowired
   private RoleService roleService;
 
   /**

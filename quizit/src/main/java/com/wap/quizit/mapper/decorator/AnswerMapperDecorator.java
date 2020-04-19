@@ -7,14 +7,17 @@ import com.wap.quizit.model.Question;
 import com.wap.quizit.service.AnswerService;
 import com.wap.quizit.service.QuestionService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@AllArgsConstructor
 public abstract class AnswerMapperDecorator implements AnswerMapper {
 
+  @Autowired
   @Qualifier("delegate")
   private AnswerMapper delegate;
+  @Autowired
   private AnswerService answerService;
+  @Autowired
   private QuestionService questionService;
 
   /**

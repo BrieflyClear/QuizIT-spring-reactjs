@@ -5,15 +5,17 @@ import com.wap.quizit.mapper.CommentMapper;
 import com.wap.quizit.model.Comment;
 import com.wap.quizit.service.QuestionService;
 import com.wap.quizit.service.UserService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@AllArgsConstructor
 public abstract class CommentMapperDecorator implements CommentMapper {
 
+  @Autowired
   @Qualifier("delegate")
   private CommentMapper delegate;
+  @Autowired
   private UserService userService;
+  @Autowired
   private QuestionService questionService;
 
   /**

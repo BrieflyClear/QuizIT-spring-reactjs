@@ -8,19 +8,22 @@ import com.wap.quizit.model.Question;
 import com.wap.quizit.service.AnswerService;
 import com.wap.quizit.service.CommentService;
 import com.wap.quizit.service.QuizService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@AllArgsConstructor
 public abstract class QuestionMapperDecorator implements QuestionMapper {
 
+  @Autowired
   @Qualifier("delegate")
   private QuestionMapper delegate;
+  @Autowired
   private QuizService quizService;
+  @Autowired
   private AnswerService answerService;
+  @Autowired
   private CommentService commentService;
 
   /**

@@ -13,8 +13,12 @@ import org.mapstruct.Mapping;
 public interface CommentMapper {
 
   @Mapping(target="issuedTime", source = "issuedTime", dateFormat = "dd-MM-yyyy HH:mm:ss")
+  @Mapping(target = "question", source = "entity.question.id")
+  @Mapping(target = "author", source = "entity.author.id")
   CommentDTO map(Comment entity);
 
   @Mapping(target="issuedTime", source = "issuedTime", dateFormat = "dd-MM-yyyy HH:mm:ss")
+  @Mapping(target = "question", ignore = true)
+  @Mapping(target = "author", ignore = true)
   Comment map(CommentDTO dto);
 }

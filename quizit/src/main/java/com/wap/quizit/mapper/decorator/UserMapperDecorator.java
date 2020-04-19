@@ -9,21 +9,26 @@ import com.wap.quizit.model.Report;
 import com.wap.quizit.model.User;
 import com.wap.quizit.service.*;
 import com.wap.quizit.util.Constants;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@AllArgsConstructor
 public abstract class UserMapperDecorator implements UserMapper {
 
+  @Autowired
   @Qualifier("delegate")
   private UserMapper delegate;
+  @Autowired
   private QuizService quizService;
+  @Autowired
   private RoleService roleService;
+  @Autowired
   private CommentService commentService;
+  @Autowired
   private ReportService reportService;
+  @Autowired
   private UserService userService;
 
   /**

@@ -5,15 +5,17 @@ import com.wap.quizit.mapper.ReportMapper;
 import com.wap.quizit.model.Report;
 import com.wap.quizit.service.QuizService;
 import com.wap.quizit.service.UserService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@AllArgsConstructor
 public abstract class ReportMapperDecorator implements ReportMapper {
 
+  @Autowired
   @Qualifier("delegate")
   private ReportMapper delegate;
+  @Autowired
   private QuizService quizService;
+  @Autowired
   private UserService userService;
 
   /**

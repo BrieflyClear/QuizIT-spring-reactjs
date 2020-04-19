@@ -5,17 +5,18 @@ import com.wap.quizit.mapper.CategoryMapper;
 import com.wap.quizit.model.Category;
 import com.wap.quizit.model.QuizCategory;
 import com.wap.quizit.service.CategoryService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@AllArgsConstructor
 public abstract class CategoryMapperDecorator implements CategoryMapper {
 
+  @Autowired
   @Qualifier("delegate")
   private CategoryMapper delegate;
+  @Autowired
   private CategoryService categoryService;
 
   @Override
