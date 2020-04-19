@@ -22,6 +22,10 @@ public class QuizCategoryService {
     return quizCategoryRepository.findAll();
   }
 
+  public Optional<QuizCategory> getByQuizAndCategoryId(Long quizId, Long categoryId) {
+    return quizCategoryRepository.findByQuizIdAndCategoryId(quizId, categoryId);
+  }
+
   public QuizCategory save(QuizCategory quizCategory) {
     return quizCategoryRepository.save(quizCategory);
   }
