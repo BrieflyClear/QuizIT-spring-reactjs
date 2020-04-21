@@ -35,5 +35,5 @@ public class UserQuizAttempt {
   private LocalDateTime attemptTime;
 
   @OneToMany(mappedBy = "attempt", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<UserQuizAttemptAnswer> answers;
+  private Set<UserQuizAttemptAnswer> attemptAnswers;
 }
