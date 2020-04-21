@@ -1,9 +1,7 @@
 package com.wap.quizit.service;
 
-import com.wap.quizit.model.Answer;
 import com.wap.quizit.model.Role;
 import com.wap.quizit.repository.RoleRepository;
-import com.wap.quizit.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

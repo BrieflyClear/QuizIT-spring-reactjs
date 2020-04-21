@@ -26,9 +26,6 @@ public abstract class QuestionMapperDecorator implements QuestionMapper {
   @Autowired
   private CommentService commentService;
 
-  /**
-   * Should throw error instead of null
-   */
   @Override
   public Question map(QuestionDTO dto) {
     var question = delegate.map(dto);

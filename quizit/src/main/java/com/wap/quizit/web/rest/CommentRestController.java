@@ -1,8 +1,11 @@
 package com.wap.quizit.web.rest;
 
 import com.wap.quizit.model.Comment;
+import com.wap.quizit.model.Question;
+import com.wap.quizit.model.User;
 import com.wap.quizit.service.CommentService;
 import com.wap.quizit.service.dto.CommentDTO;
+import com.wap.quizit.service.exception.EntityFieldValidationException;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.CommentMapper;
 import com.wap.quizit.util.Constants;
@@ -43,6 +46,7 @@ public class CommentRestController {
   public ResponseEntity<CommentDTO> create(@RequestBody CommentDTO dto) {
     Comment comment = commentMapper.map(dto);
     comment.setId(Constants.DEFAULT_ID);
+    checkConditions(comment, dto);
     var saved = commentService.save(comment);
     return new ResponseEntity<>(commentMapper.map(saved), HttpStatus.OK);
   }
@@ -53,6 +57,7 @@ public class CommentRestController {
       throw new EntityNotFoundException(Comment.class, dto.getId());
     }
     Comment comment = commentMapper.map(dto);
+    checkConditions(comment, dto);
     var saved = commentService.save(comment);
     return new ResponseEntity<>(commentMapper.map(saved), HttpStatus.OK);
   }
@@ -61,5 +66,19 @@ public class CommentRestController {
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
     commentService.deleteById(id);
     return ResponseEntity.noContent().build();
+  }
+
+  protected void checkConditions(Comment comment, CommentDTO dto) {
+    if(comment.getAuthor() == null) {
+      throw new EntityNotFoundException(User.class, dto.getAuthor());
+    }
+    if(comment.getQuestion() == null) {
+      throw new EntityNotFoundException(Question.class, dto.getQuestion());
+    }
+    if(comment.getContents().length() > 200) {
+      throw new EntityFieldValidationException(
+          Comment.class.getSimpleName(), "contents", dto.getContents(),
+          "Comment contents is too long! Maximum 200 characters.");
+    }
   }
 }

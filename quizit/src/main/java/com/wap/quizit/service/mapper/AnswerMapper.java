@@ -14,9 +14,11 @@ public interface AnswerMapper {
 
   @Mapping(target = "question", source = "entity.question.id")
   @Mapping(target = "isCorrect", source = "correct")
+  @Mapping(target = "pointsCount", source = "entity.pointsCount")
   AnswerDTO map(Answer entity);
 
   @Mapping(target = "question", ignore = true)
   @Mapping(target = "correct", source = "isCorrect")
+  @Mapping(target = "pointsCount", source = "dto.pointsCount")
   Answer map(AnswerDTO dto);
 }

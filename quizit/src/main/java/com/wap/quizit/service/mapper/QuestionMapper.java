@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 public interface QuestionMapper {
 
   @Mapping(target = "quiz", source = "entity.quiz.id")
+  @Mapping(target = "isClosed", source = "closed")
+  @Mapping(target = "isMultipleChoice", source = "multipleChoice")
   @Mapping(target = "answers", expression = "java(convertAnswers(entity.getAnswers()))")
   @Mapping(target = "comments", expression = "java(convertComments(entity.getComments()))")
   QuestionDTO map(Question entity);
@@ -26,6 +28,8 @@ public interface QuestionMapper {
   @Mapping(target = "quiz", ignore = true)
   @Mapping(target = "answers", ignore = true)
   @Mapping(target = "comments", ignore = true)
+  @Mapping(target = "closed", source = "dto.isClosed")
+  @Mapping(target = "multipleChoice", source = "dto.isMultipleChoice")
   Question map(QuestionDTO dto);
 
   default List<Long> convertAnswers(Set<Answer> list) {

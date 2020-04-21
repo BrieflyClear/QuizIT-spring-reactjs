@@ -47,6 +47,7 @@ public class RoleRestController {
       throw new EntityFieldValidationException(Role.class.getSimpleName(), "name", dto.getName(), "Value already in use!");
     }
     Role role = new Role(Constants.DEFAULT_ID, dto.getName(), new HashSet<>());
+    checkConditions(role, dto);
     var saved = roleService.save(role);
     return new ResponseEntity<>(roleMapper.map(saved), HttpStatus.OK);
   }
@@ -57,6 +58,7 @@ public class RoleRestController {
       throw new EntityNotFoundException(Role.class, dto.getId());
     }
     Role role = roleMapper.map(dto);
+    checkConditions(role, dto);
     var saved = roleService.save(role);
     return new ResponseEntity<>(roleMapper.map(saved), HttpStatus.OK);
   }
@@ -65,5 +67,12 @@ public class RoleRestController {
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
     roleService.deleteById(id);
     return ResponseEntity.noContent().build();
+  }
+
+  protected void checkConditions(Role role, RoleDTO dto) {
+    if(role.getName().length() > 20) {
+      throw new EntityFieldValidationException(
+          Role.class.getSimpleName(), "name", dto.getName(), "Name is too long! Maximum 20 characters.");
+    }
   }
 }

@@ -17,9 +17,6 @@ public abstract class RoleMapperDecorator implements RoleMapper {
   @Autowired
   private RoleService roleService;
 
-  /**
-   * Should throw error instead of null
-   */
   @Override
   public Role map(RoleDTO dto) {
     var role = delegate.map(dto);

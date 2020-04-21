@@ -21,6 +21,8 @@ public class UserDTO {
   @Size(min = 1, max = 50)
   String username;
 
+  @NotNull Boolean isPremium;
+
   @NotNull Long role;
 
   @NotNull List<Long> quizzes;
