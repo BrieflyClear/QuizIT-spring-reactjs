@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"answers"})
+@EqualsAndHashCode(exclude = {"attemptAnswers"})
 @Entity
 @Table(name = "users_quizzes_attempts")
 public class UserQuizAttempt {
@@ -27,10 +27,9 @@ public class UserQuizAttempt {
   private User user;
 
   @ManyToOne
-  @JoinColumn(name = "quizzes_q_id", referencedColumnName = "u_id", nullable = false)
+  @JoinColumn(name = "quizzes_q_id", referencedColumnName = "q_id", nullable = false)
   private Quiz quiz;
 
-  // TODO (other entities too) assign Time.NOW() value when creating new entity
   @Column(name = "attemt_time", nullable = false)
   private LocalDateTime attemptTime;
 

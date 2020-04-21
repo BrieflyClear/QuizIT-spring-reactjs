@@ -34,7 +34,7 @@ public class UserQuizAttemptService {
   }
 
   public List<UserQuizAttempt> getByQuestion(Long question) {
-    return solvedQuizzesRepository.findByAnswersQuestionId(question);
+    return solvedQuizzesRepository.findByAttemptAnswersQuestionId(question);
   }
 
   public List<UserQuizAttempt> getByUserAndQuiz(Long user, Long quiz) {

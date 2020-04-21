@@ -106,7 +106,7 @@ public class UserQuizAttemptRestController {
     return new ResponseEntity<>(userQuizAttemptMapper.map(saved), HttpStatus.OK);
   }
 
-  @PostMapping
+  @PostMapping("/answer")
   public ResponseEntity<UserQuizAttemptAnswerDTO> createQuestionAnswer(@RequestBody UserQuizAttemptAnswerDTO dto) {
     UserQuizAttemptAnswer userQuizAttempt = userQuizAttemptMapper.map(dto);
     userQuizAttempt.setId(Constants.DEFAULT_ID);
@@ -126,7 +126,7 @@ public class UserQuizAttemptRestController {
     return new ResponseEntity<>(userQuizAttemptMapper.map(saved), HttpStatus.OK);
   }
 
-  @PutMapping
+  @PutMapping("/answer")
   public ResponseEntity<UserQuizAttemptAnswerDTO> updateAnswer(@RequestBody UserQuizAttemptAnswerDTO dto) {
     if(userQuizAttemptService.getByUserQuizAttemptAnswerId(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(UserQuizAttemptAnswer.class, dto.getId());

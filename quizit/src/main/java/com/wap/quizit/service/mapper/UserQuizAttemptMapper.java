@@ -44,7 +44,13 @@ public interface UserQuizAttemptMapper {
   @Mapping(target = "attempt", ignore = true)
   UserQuizAttemptAnswer map(UserQuizAttemptAnswerDTO dto);
 
-
+  @Mapping(target = "attemptId", ignore = true)
+  @Mapping(target = "user", ignore = true)
+  @Mapping(target = "quiz", ignore = true)
+  @Mapping(target = "maxPointsCount", ignore = true)
+  @Mapping(target = "pointsGained", ignore = true)
+  @Mapping(target = "attemptTime", ignore = true)
+  @Mapping(target = "questions", ignore = true)
   UserQuizSummary mapToSummary(UserQuizAttempt entity);
 
 
