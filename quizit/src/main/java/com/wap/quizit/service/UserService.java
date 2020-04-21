@@ -52,29 +52,6 @@ public class UserService {
     return userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException(email));
   }
 
-  public User registerUser(RegisterUserDTO registerForm) {
-    User user = new User();
-    user.setId(Constants.DEFAULT_ID);
-    user.setReportsIssued(new HashSet<>());
-    user.setQuizzes(new HashSet<>());
-    user.setComments(new HashSet<>());
-    user.setRole(roleRepository.findById(Constants.ROLE_USER)
-        .orElseThrow(() -> new EntityNotFoundException(Role.class, Constants.ROLE_USER)));
-    user.setEmail(registerForm.getEmail());
-    user.setPassword(registerForm.getPassword());
-    user.setActivePremium(false);
-    user.setUsername(registerForm.getUsername());
-    if(user.getUsername().length() > 15) {
-      throw new EntityFieldValidationException(
-          User.class.getSimpleName(), "username", user.getUsername(), "Username too long! Maximum 15 characters");
-    }
-    if(user.getPassword().length() > 60) {
-      throw new EntityFieldValidationException(
-          User.class.getSimpleName(), "password", "---", "Password too long! Maximum 60 characters");
-    }
-    return userRepository.save(user);
-  }
-
   public User save(User user) {
     return userRepository.save(user);
   }

@@ -4,6 +4,7 @@ import com.wap.quizit.model.Comment;
 import com.wap.quizit.model.Quiz;
 import com.wap.quizit.model.Report;
 import com.wap.quizit.model.User;
+import com.wap.quizit.service.dto.RegisterUserDTO;
 import com.wap.quizit.service.dto.UserDTO;
 import com.wap.quizit.service.mapper.decorator.UserMapperDecorator;
 import org.mapstruct.DecoratedWith;
@@ -34,6 +35,15 @@ public interface UserMapper {
   @Mapping(target = "password", ignore = true)
   @Mapping(target = "activePremium", source = "dto.isPremium")
   User map(UserDTO dto);
+
+  @Mapping(target = "role", ignore = true)
+  @Mapping(target = "comments", ignore = true)
+  @Mapping(target = "quizzes", ignore = true)
+  @Mapping(target = "reportsIssued", ignore = true)
+  @Mapping(target = "email", ignore = true)
+  @Mapping(target = "password", ignore = true)
+  @Mapping(target = "activePremium", ignore = true)
+  User map(RegisterUserDTO registerForm);
 
   default List<Long> convertQuizzes(Set<Quiz> list) {
     return list.stream().map(Quiz::getId).collect(Collectors.toList());

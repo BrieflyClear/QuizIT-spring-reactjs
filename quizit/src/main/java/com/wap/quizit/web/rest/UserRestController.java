@@ -46,7 +46,8 @@ public class UserRestController {
     if(userService.getByEmailNoException(form.getEmail()).isPresent()) {
       throw new EmailAlreadyUsedException();
     }
-    var newUser = userService.registerUser(form);
+    var newUser = userService.save(userMapper.map(form));
+    //TODO check
     return new ResponseEntity<>(userMapper.map(newUser), HttpStatus.OK);
   }
 
