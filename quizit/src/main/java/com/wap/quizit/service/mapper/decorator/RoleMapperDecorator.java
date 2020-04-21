@@ -20,7 +20,7 @@ public abstract class RoleMapperDecorator implements RoleMapper {
   @Override
   public Role map(RoleDTO dto) {
     var role = delegate.map(dto);
-    var savedRole = roleService.getById(dto.getId());
+    var savedRole = roleService.getByIdNoException(dto.getId());
     if(savedRole.isPresent()) {
       role.setUsers(savedRole.get().getUsers());
     } else {

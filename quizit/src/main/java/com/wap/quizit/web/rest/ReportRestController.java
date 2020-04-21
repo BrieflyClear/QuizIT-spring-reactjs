@@ -29,12 +29,7 @@ public class ReportRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ReportDTO> get(@PathVariable Long id) {
-    var tmp = reportService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(reportMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(Report.class, id);
-    }
+    return new ResponseEntity<>(reportMapper.map(reportService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -53,7 +48,7 @@ public class ReportRestController {
 
   @PutMapping
   public ResponseEntity<ReportDTO> update(@RequestBody ReportDTO dto) {
-    if(reportService.getById(dto.getId()).isEmpty()) {
+    if(reportService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(Report.class, dto.getId());
     }
     Report report = reportMapper.map(dto);

@@ -27,12 +27,7 @@ public class RoleRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<RoleDTO> get(@PathVariable Long id) {
-    var tmp = roleService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(roleMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(Role.class, id);
-    }
+    return new ResponseEntity<>(roleMapper.map(roleService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -43,7 +38,7 @@ public class RoleRestController {
 
   @PostMapping
   public ResponseEntity<RoleDTO> create(@RequestBody RoleDTO dto) {
-    if(roleService.getByName(dto.getName()).isPresent()) {
+    if(roleService.getByNameNoException(dto.getName()).isPresent()) {
       throw new EntityFieldValidationException(Role.class.getSimpleName(), "name", dto.getName(), "Value already in use!");
     }
     Role role = new Role(Constants.DEFAULT_ID, dto.getName(), new HashSet<>());
@@ -54,7 +49,7 @@ public class RoleRestController {
 
   @PutMapping
   public ResponseEntity<RoleDTO> update(@RequestBody RoleDTO dto) {
-    if(roleService.getById(dto.getId()).isEmpty()) {
+    if(roleService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(Role.class, dto.getId());
     }
     Role role = roleMapper.map(dto);

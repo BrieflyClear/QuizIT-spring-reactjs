@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,10 +35,8 @@ public class UserQuizAttemptRestController {
   }
 
   @GetMapping("/id/{id}")
-  public ResponseEntity<List<UserQuizAttemptDTO>> getById(@PathVariable("id") Long id) {
-    List<UserQuizAttemptDTO> list = userQuizAttemptService.getById(id)
-        .stream().map(userQuizAttemptMapper::map).collect(Collectors.toList());
-    return new ResponseEntity<>(list, HttpStatus.OK);
+  public ResponseEntity<UserQuizAttemptDTO> getById(@PathVariable("id") Long id) {
+    return new ResponseEntity<>(userQuizAttemptMapper.map(userQuizAttemptService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping("/user/{userId}")
@@ -73,12 +70,7 @@ public class UserQuizAttemptRestController {
 
   @GetMapping("/id/{id}/summary")
   public ResponseEntity<UserQuizSummary> getSummaryByAttemptId(@PathVariable("id") Long id) {
-    Optional<UserQuizAttempt> tmp = userQuizAttemptService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(userQuizAttemptMapper.mapToSummary(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(UserQuizAttempt.class, id);
-    }
+    return new ResponseEntity<>(userQuizAttemptMapper.mapToSummary(userQuizAttemptService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping("/summary/{userId}")
@@ -117,7 +109,7 @@ public class UserQuizAttemptRestController {
 
   @PutMapping
   public ResponseEntity<UserQuizAttemptDTO> update(@RequestBody UserQuizAttemptDTO dto) {
-    if(userQuizAttemptService.getById(dto.getId()).isEmpty()) {
+    if(userQuizAttemptService.getByIdNoError(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(UserQuizAttempt.class, dto.getId());
     }
     UserQuizAttempt userQuizAttempt = userQuizAttemptMapper.map(dto);
@@ -128,7 +120,7 @@ public class UserQuizAttemptRestController {
 
   @PutMapping("/answer")
   public ResponseEntity<UserQuizAttemptAnswerDTO> updateAnswer(@RequestBody UserQuizAttemptAnswerDTO dto) {
-    if(userQuizAttemptService.getByUserQuizAttemptAnswerId(dto.getId()).isEmpty()) {
+    if(userQuizAttemptService.getQuizAttemptAnswerByIdNoError(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(UserQuizAttemptAnswer.class, dto.getId());
     }
     UserQuizAttemptAnswer userQuizAttempt = userQuizAttemptMapper.map(dto);

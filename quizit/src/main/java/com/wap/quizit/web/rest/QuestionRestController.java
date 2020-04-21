@@ -28,12 +28,7 @@ public class QuestionRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<QuestionDTO> get(@PathVariable Long id) {
-    var tmp = questionService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(questionMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(Question.class, id);
-    }
+    return new ResponseEntity<>(questionMapper.map(questionService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -53,7 +48,7 @@ public class QuestionRestController {
 
   @PutMapping
   public ResponseEntity<QuestionDTO> update(@RequestBody QuestionDTO dto) {
-    if(questionService.getById(dto.getId()).isEmpty()) {
+    if(questionService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(Question.class, dto.getId());
     }
     Question question = questionMapper.map(dto);

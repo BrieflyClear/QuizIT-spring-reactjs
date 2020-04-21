@@ -29,11 +29,11 @@ public abstract class QuestionMapperDecorator implements QuestionMapper {
   @Override
   public Question map(QuestionDTO dto) {
     var question = delegate.map(dto);
-    question.setQuiz(quizService.getById(dto.getQuiz()).orElse(null));
+    question.setQuiz(quizService.getById(dto.getQuiz()));
     Set<Answer> answers = new HashSet<>();
-    dto.getAnswers().forEach(id -> answerService.getById(id).map(answers::add));
+    dto.getAnswers().forEach(id -> answers.add(answerService.getById(id)));
     Set<Comment> comments = new HashSet<>();
-    dto.getComments().forEach(id -> commentService.getById(id).map(comments::add));
+    dto.getComments().forEach(id -> comments.add(commentService.getById(id)));
     question.setComments(comments);
     question.setAnswers(answers);
     return question;

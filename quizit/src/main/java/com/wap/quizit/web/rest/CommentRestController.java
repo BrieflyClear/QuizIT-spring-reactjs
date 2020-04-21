@@ -28,12 +28,7 @@ public class CommentRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<CommentDTO> get(@PathVariable Long id) {
-    var tmp = commentService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(commentMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(Comment.class, id);
-    }
+    return new ResponseEntity<>(commentMapper.map(commentService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -53,7 +48,7 @@ public class CommentRestController {
 
   @PutMapping
   public ResponseEntity<CommentDTO> update(@RequestBody CommentDTO dto) {
-    if(commentService.getById(dto.getId()).isEmpty()) {
+    if(commentService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(Comment.class, dto.getId());
     }
     Comment comment = commentMapper.map(dto);

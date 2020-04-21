@@ -15,14 +15,12 @@ public abstract class AnswerMapperDecorator implements AnswerMapper {
   @Qualifier("delegate")
   private AnswerMapper delegate;
   @Autowired
-  private AnswerService answerService;
-  @Autowired
   private QuestionService questionService;
 
   @Override
   public Answer map(AnswerDTO dto) {
     var answer = delegate.map(dto);
-    Question question = questionService.getById(dto.getQuestion()).orElse(null);
+    Question question = questionService.getById(dto.getQuestion());
     answer.setQuestion(question);
     return answer;
   }

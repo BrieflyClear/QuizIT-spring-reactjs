@@ -28,12 +28,7 @@ public class QuizRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<QuizDTO> get(@PathVariable Long id) {
-    var tmp = quizService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(quizMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(Quiz.class, id);
-    }
+    return new ResponseEntity<>(quizMapper.map(quizService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -53,7 +48,7 @@ public class QuizRestController {
 
   @PutMapping
   public ResponseEntity<QuizDTO> update(@RequestBody QuizDTO dto) {
-    if(quizService.getById(dto.getId()).isEmpty()) {
+    if(quizService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(Quiz.class, dto.getId());
     }
     Quiz quiz = quizMapper.map(dto);

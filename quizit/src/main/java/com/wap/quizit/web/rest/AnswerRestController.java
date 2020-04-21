@@ -27,12 +27,7 @@ public class AnswerRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<AnswerDTO> getAnswer(@PathVariable Long id) {
-    var tmp = answerService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(answerMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(Answer.class, id);
-    }
+    return new ResponseEntity<>(answerMapper.map(answerService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -52,7 +47,7 @@ public class AnswerRestController {
 
   @PutMapping
   public ResponseEntity<AnswerDTO> update(@RequestBody AnswerDTO dto) {
-    if(answerService.getById(dto.getId()).isEmpty()) {
+    if(answerService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(Answer.class, dto.getId());
     }
     Answer answer = answerMapper.map(dto);
