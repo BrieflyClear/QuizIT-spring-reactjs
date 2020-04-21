@@ -31,9 +31,6 @@ public abstract class UserMapperDecorator implements UserMapper {
   @Autowired
   private UserService userService;
 
-  /**
-   * Should throw error instead of null
-   */
   @Override
   public User map(UserDTO dto) {
     var user = delegate.map(dto);
@@ -49,22 +46,4 @@ public abstract class UserMapperDecorator implements UserMapper {
     user.setReportsIssued(reports);
     return user;
   }
-
-  /*@Override
-  public User map(RegisterUserDTO registerForm) {
-    if(userService.getByUsername(registerForm.getUsername()).isEmpty()
-        && userService.getByEmail(registerForm.getEmail()).isEmpty()) {
-      User user = new User();
-      user.setId(Constants.DEFAULT_ID);
-      user.setReportsIssued(new HashSet<>());
-      user.setQuizzes(new HashSet<>());
-      user.setComments(new HashSet<>());
-      user.setRole(roleService.getById(Constants.ROLE_USER).orElse(null));
-      user.setEmail(registerForm.getEmail());
-      user.setPassword(registerForm.getPassword());
-      user.setUsername(registerForm.getUsername());
-      return user;
-    }
-    return null;
-  }*/
 }

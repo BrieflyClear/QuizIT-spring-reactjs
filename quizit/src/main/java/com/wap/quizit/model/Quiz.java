@@ -22,7 +22,7 @@ public class Quiz {
   @Column(name = "is_public", nullable = false)
   private boolean isPublic;
 
-  @Column(name = "title", nullable = false)
+  @Column(name = "title", nullable = false, length = 50)
   private String title;
 
   @ManyToOne

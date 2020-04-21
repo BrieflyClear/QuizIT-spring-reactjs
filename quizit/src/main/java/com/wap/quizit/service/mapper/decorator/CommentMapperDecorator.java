@@ -18,9 +18,6 @@ public abstract class CommentMapperDecorator implements CommentMapper {
   @Autowired
   private QuestionService questionService;
 
-  /**
-   * Should throw error when the Question or User is null
-   */
   @Override
   public Comment map(CommentDTO dto) {
     var comment = delegate.map(dto);

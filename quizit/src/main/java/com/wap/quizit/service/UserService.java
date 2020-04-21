@@ -1,10 +1,12 @@
 package com.wap.quizit.service;
 
+import com.wap.quizit.model.Role;
 import com.wap.quizit.model.User;
 import com.wap.quizit.repository.RoleRepository;
 import com.wap.quizit.repository.UserRepository;
 import com.wap.quizit.service.dto.RegisterUserDTO;
-import com.wap.quizit.service.exception.RoleNotFoundException;
+import com.wap.quizit.service.exception.EntityFieldValidationException;
+import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.util.Constants;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,12 +44,20 @@ public class UserService {
     user.setReportsIssued(new HashSet<>());
     user.setQuizzes(new HashSet<>());
     user.setComments(new HashSet<>());
-    user.setRole(roleRepository.findById(Constants.ROLE_USER).orElseThrow(RoleNotFoundException::new));
+    user.setRole(roleRepository.findById(Constants.ROLE_USER)
+        .orElseThrow(() -> new EntityNotFoundException(Role.class, Constants.ROLE_USER)));
     user.setEmail(registerForm.getEmail());
     user.setPassword(registerForm.getPassword());
     user.setUsername(registerForm.getUsername());
-    userRepository.save(user);
-    return user;
+    if(user.getUsername().length() > 15) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "username", user.getUsername(), "Username too long! Maximum 15 characters");
+    }
+    if(user.getPassword().length() > 60) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "password", "---", "Password too long! Maximum 60 characters");
+    }
+    return userRepository.save(user);
   }
 
   public User save(User user) {

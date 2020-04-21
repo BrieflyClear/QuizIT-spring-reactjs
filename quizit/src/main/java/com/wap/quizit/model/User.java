@@ -19,14 +19,17 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "user_name", nullable = false, unique = true)
+  @Column(name = "username", nullable = false, unique = true, length = 15)
   private String username;
 
-  @Column(name = "email", nullable = false, unique = true)
+  @Column(name = "email", nullable = false, unique = true, length = 50)
   private String email;
 
-  @Column(name = "password", nullable = false)
+  @Column(name = "password", nullable = false, length = 60)
   private String password;
+
+  @Column(name = "is_active_premium", nullable = false)
+  private boolean isActivePremium;
 
   @ManyToOne
   @JoinColumn(name = "roles_r_id", referencedColumnName = "r_id", nullable = false)
@@ -40,4 +43,7 @@ public class User {
 
   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Comment> comments;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<SolvedQuizAnswer> solvedQuestions;
 }

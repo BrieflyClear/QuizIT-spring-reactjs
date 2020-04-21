@@ -17,6 +17,10 @@ public class QuestionDTO {
 
   @NotNull @NotBlank String contents;
 
+  @NotNull Boolean isMultipleChoice;
+
+  @NotNull Boolean isClosed;
+
   @NotNull List<Long> answers;
 
   @NotNull List<Long> comments;

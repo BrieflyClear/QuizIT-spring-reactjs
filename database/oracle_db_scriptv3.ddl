@@ -8,17 +8,18 @@
 
 CREATE TABLE Answers
   (
-    a_id                  NUMBER (10) NOT NULL ,
+    a_id                  NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
     answer_contents       VARCHAR2 (4000) NOT NULL ,
-    correct               NUMBER NOT NULL ,
-    Questions_question_id NUMBER (10) NOT NULL
+    is_correct               NUMBER NOT NULL ,
+    points_count NUMBER (2) ,
+    Questions_question_id NUMBER NOT NULL
   ) ;
 ALTER TABLE Answers ADD CONSTRAINT Answers_PK PRIMARY KEY ( a_id ) ;
-
+ALTER TABLE Answers ADD CONSTRAINT points_count_check Check ( points_count >= -50 AND points_count <= 50 ) ;
 
 CREATE TABLE Categories
   (
-    cat_id   NUMBER (4) NOT NULL ,
+    cat_id   NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
     cat_name VARCHAR2 (40) NOT NULL
   ) ;
 ALTER TABLE Categories ADD CONSTRAINT Categories_PK PRIMARY KEY ( cat_id ) ;
@@ -27,69 +28,57 @@ ALTER TABLE Categories ADD CONSTRAINT Categories_cat_name_UN UNIQUE ( cat_name )
 
 CREATE TABLE Comments
   (
-    c_id                  NUMBER (10) NOT NULL ,
+    c_id                  NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
     contents              VARCHAR2 (200) NOT NULL ,
     issued_time           TIMESTAMP WITH TIME ZONE NOT NULL ,
-    Users_u_id            NUMBER (10) NOT NULL ,
-    Questions_question_id NUMBER (10) NOT NULL
+    Users_u_id            NUMBER NOT NULL ,
+    Questions_question_id NUMBER NOT NULL
   ) ;
 ALTER TABLE Comments ADD CONSTRAINT Comments_PK PRIMARY KEY ( c_id ) ;
 
-
 CREATE TABLE Questions
   (
-    question_id       NUMBER (10) NOT NULL ,
-    question_contents VARCHAR2 (50) NOT NULL ,
+    question_id       NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
+    question_contents VARCHAR2 (1000) NOT NULL ,
+    is_multiple_choice  NUMBER NOT NULL ,
     is_closed         NUMBER NOT NULL ,
-    Quizzes_q_id       NUMBER (10) NOT NULL
+    Quizzes_q_id       NUMBER NOT NULL
   ) ;
 ALTER TABLE Questions ADD CONSTRAINT Questions_PK PRIMARY KEY ( question_id ) ;
 
-
-CREATE TABLE Quiz_Categories
+CREATE TABLE Quizzes_Categories
   (
-    qc_id             NUMBER (6) NOT NULL ,
-    Categories_cat_id NUMBER (4) NOT NULL ,
-    Quizzes_q_id       NUMBER (10) NOT NULL
+    qc_id             NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
+    Categories_cat_id NUMBER NOT NULL ,
+    Quizzes_q_id       NUMBER NOT NULL
   ) ;
-ALTER TABLE Quiz_Categories ADD CONSTRAINT Quiz_Categories_PK PRIMARY KEY ( qc_id ) ;
-
+ALTER TABLE Quizzes_Categories ADD CONSTRAINT Quizzes_Categories_PK PRIMARY KEY ( qc_id ) ;
 
 CREATE TABLE Quizzes
   (
-    q_id       NUMBER (10) NOT NULL ,
-    "public"   NUMBER NOT NULL ,
-    title      VARCHAR2 (30) NOT NULL ,
-    Users_u_id NUMBER (10) NOT NULL
+    q_id       NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
+    is_public   NUMBER NOT NULL ,
+    title      VARCHAR2 (50) NOT NULL ,
+    Users_u_id NUMBER NOT NULL
   ) ;
 ALTER TABLE Quizzes ADD CONSTRAINT Quizzes_PK PRIMARY KEY ( q_id ) ;
 
-
-CREATE TABLE Quizzes_categories
-  (
-    Quizzes_q_id            NUMBER (10) NOT NULL ,
-    Quiz_Categories_cat_id NUMBER (4) NOT NULL
-  ) ;
-ALTER TABLE Quizzes_categories ADD CONSTRAINT Relation_2_PK PRIMARY KEY ( Quizzes_q_id, Quiz_Categories_cat_id ) ;
-
-
 CREATE TABLE Reports
   (
-    r_id        NUMBER (8) NOT NULL ,
-    title       VARCHAR2 (25) NOT NULL ,
+    r_id        NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
+    title       VARCHAR2 (50) NOT NULL ,
     description VARCHAR2 (200) NOT NULL ,
     issued_time TIMESTAMP WITH TIME ZONE NOT NULL ,
     status      VARCHAR2 (20) NOT NULL ,
-    Quizzes_q_id NUMBER (10) NOT NULL ,
-    Users_u_id  NUMBER (10) NOT NULL
+    Quizzes_q_id NUMBER NOT NULL ,
+    Users_u_id  NUMBER NOT NULL
   ) ;
 ALTER TABLE Reports ADD CONSTRAINT Reports_PK PRIMARY KEY ( r_id ) ;
 
-
 CREATE TABLE Roles
   (
-    r_id NUMBER (1) NOT NULL ,
-    Name VARCHAR2 (20) NOT NULL
+    r_id NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
+    name VARCHAR2 (20) NOT NULL
   ) ;
 ALTER TABLE Roles ADD CONSTRAINT Roles_PK PRIMARY KEY ( r_id ) ;
 ALTER TABLE Roles ADD CONSTRAINT Roles_Name_UN UNIQUE ( Name ) ;
@@ -97,31 +86,21 @@ ALTER TABLE Roles ADD CONSTRAINT Roles_Name_UN UNIQUE ( Name ) ;
 
 CREATE TABLE Solved_quiz_answers
   (
-    sqa_id                NUMBER (8) NOT NULL ,
-    Solved_quizzes_sq_id  NUMBER (8) NOT NULL ,
-    Questions_question_id NUMBER (10) NOT NULL ,
-    Answers_a_id          NUMBER (10)
+    sqa_id                NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
+    Users_u_id             NUMBER NOT NULL ,
+    Questions_question_id NUMBER NOT NULL ,
+    Answers_a_id          NUMBER
   ) ;
 ALTER TABLE Solved_quiz_answers ADD CONSTRAINT Solved_quiz_answers_PK PRIMARY KEY ( sqa_id ) ;
 
-
-CREATE TABLE Solved_quizzes
-  (
-    sq_id         NUMBER (8) NOT NULL ,
-    Users_u_id    NUMBER (10) NOT NULL ,
-    Quizzes_q_id   NUMBER (10) NOT NULL
-  ) ;
-ALTER TABLE Solved_quizzes ADD CONSTRAINT Solved_quizzes_PK PRIMARY KEY ( sq_id ) ;
-
-
 CREATE TABLE Users
   (
-    u_id           NUMBER (10) NOT NULL ,
-    username      VARCHAR2 (40) NOT NULL ,
+    u_id           NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
+    username      VARCHAR2 (15) NOT NULL ,
     email          VARCHAR2 (50) NOT NULL ,
-    password       VARCHAR2 (30) NOT NULL ,
-    active_premium NUMBER NOT NULL ,
-    Roles_r_id     NUMBER (1) NOT NULL
+    password       VARCHAR2 (60) NOT NULL ,
+    is_active_premium NUMBER NOT NULL ,
+    Roles_r_id     NUMBER NOT NULL
   ) ;
 ALTER TABLE Users ADD CONSTRAINT Users_PK PRIMARY KEY ( u_id ) ;
 ALTER TABLE Users ADD CONSTRAINT Users_user_name_email_UN UNIQUE ( username , email ) ;
@@ -133,15 +112,11 @@ ALTER TABLE Comments ADD CONSTRAINT Comments_Questions_FK FOREIGN KEY ( Question
 
 ALTER TABLE Comments ADD CONSTRAINT Comments_Users_FK FOREIGN KEY ( Users_u_id ) REFERENCES Users ( u_id ) ;
 
-ALTER TABLE Quizzes_categories ADD CONSTRAINT FK_ASS_3 FOREIGN KEY ( Quizzes_q_id ) REFERENCES Quizzes ( q_id ) ;
-
-ALTER TABLE Quizzes_categories ADD CONSTRAINT FK_ASS_4 FOREIGN KEY ( Quiz_Categories_cat_id ) REFERENCES Categories ( cat_id ) ;
-
 ALTER TABLE Questions ADD CONSTRAINT Questions_Quizzes_FK FOREIGN KEY ( Quizzes_q_id ) REFERENCES Quizzes ( q_id ) ;
 
-ALTER TABLE Quiz_Categories ADD CONSTRAINT Quiz_Categories_Categories_FK FOREIGN KEY ( Categories_cat_id ) REFERENCES Categories ( cat_id ) ;
+ALTER TABLE Quizzes_Categories ADD CONSTRAINT Quizzes_Cat_Categories_FK FOREIGN KEY ( Categories_cat_id ) REFERENCES Categories ( cat_id ) ;
 
-ALTER TABLE Quiz_Categories ADD CONSTRAINT Quiz_Categories_Quizzes_FK FOREIGN KEY ( Quizzes_q_id ) REFERENCES Quizzes ( q_id ) ;
+ALTER TABLE Quizzes_Categories ADD CONSTRAINT Quizzes_Categories_Quizzes_FK FOREIGN KEY ( Quizzes_q_id ) REFERENCES Quizzes ( q_id ) ;
 
 ALTER TABLE Quizzes ADD CONSTRAINT Quizzes_Users_FK FOREIGN KEY ( Users_u_id ) REFERENCES Users ( u_id ) ;
 
@@ -151,15 +126,10 @@ ALTER TABLE Reports ADD CONSTRAINT Reports_Users_FK FOREIGN KEY ( Users_u_id ) R
 
 ALTER TABLE Solved_quiz_answers ADD CONSTRAINT Solved_quiz_answers_Answers_FK FOREIGN KEY ( Answers_a_id ) REFERENCES Answers ( a_id ) ;
 
+ALTER TABLE Solved_quiz_answers ADD CONSTRAINT Solved_quiz_Users_FK FOREIGN KEY ( users_u_id ) REFERENCES Users ( u_id ) ;
+
 --  ERROR: FK name length exceeds maximum allowed length(30)
 ALTER TABLE Solved_quiz_answers ADD CONSTRAINT Slvd_answ_Questions_FK FOREIGN KEY ( Questions_question_id ) REFERENCES Questions ( question_id ) ;
-
---  ERROR: FK name length exceeds maximum allowed length(30)
-ALTER TABLE Solved_quiz_answers ADD CONSTRAINT Slvd_answ_Slvd_quizzes_FK FOREIGN KEY ( Solved_quizzes_sq_id ) REFERENCES Solved_quizzes ( sq_id ) ;
-
-ALTER TABLE Solved_quizzes ADD CONSTRAINT Solved_quizzes_Quizzes_FK FOREIGN KEY ( Quizzes_q_id ) REFERENCES Quizzes ( q_id ) ;
-
-ALTER TABLE Solved_quizzes ADD CONSTRAINT Solved_quizzes_Users_FK FOREIGN KEY ( Users_u_id ) REFERENCES Users ( u_id ) ;
 
 ALTER TABLE Users ADD CONSTRAINT Users_Roles_FK FOREIGN KEY ( Roles_r_id ) REFERENCES Roles ( r_id ) ;
 

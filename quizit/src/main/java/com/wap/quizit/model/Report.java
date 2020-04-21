@@ -19,13 +19,13 @@ public class Report {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "title", nullable = false)
+  @Column(name = "title", nullable = false, length = 50)
   private String title;
 
-  @Column(name = "description", nullable = false)
+  @Column(name = "description", nullable = false, length = 200)
   private String description;
 
-  @Column(name = "status", nullable = false)
+  @Column(name = "status", nullable = false, length = 20)
   private String status;
 
   @Column(name = "issued_time", nullable = false)

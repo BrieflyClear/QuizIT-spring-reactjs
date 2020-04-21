@@ -18,9 +18,6 @@ public abstract class ReportMapperDecorator implements ReportMapper {
   @Autowired
   private UserService userService;
 
-  /**
-   * Should throw error instead of null
-   */
   @Override
   public Report map(ReportDTO dto) {
     var report = delegate.map(dto);

@@ -32,9 +32,6 @@ public abstract class QuizMapperDecorator implements QuizMapper {
   @Autowired
   private ReportService reportService;
 
-  /**
-   * Should throw error instead of null
-   */
   @Override
   public Quiz map(QuizDTO dto) {
     var quiz = delegate.map(dto);

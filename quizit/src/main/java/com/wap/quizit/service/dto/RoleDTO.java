@@ -11,6 +11,5 @@ import javax.validation.constraints.NotNull;
 public class RoleDTO {
 
   @NotNull Long id;
-
   @NotNull @NotBlank String name;
 }

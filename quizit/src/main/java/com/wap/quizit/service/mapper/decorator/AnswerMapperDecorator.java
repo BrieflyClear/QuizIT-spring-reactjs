@@ -19,9 +19,6 @@ public abstract class AnswerMapperDecorator implements AnswerMapper {
   @Autowired
   private QuestionService questionService;
 
-  /**
-   * Should throw error when the Question is null
-   */
   @Override
   public Answer map(AnswerDTO dto) {
     var answer = delegate.map(dto);

@@ -19,8 +19,14 @@ public class Question {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "question_contents", nullable = false)
+  @Column(name = "question_contents", nullable = false, length = 1000)
   private String contents;
+
+  @Column(name = "is_multiple_choice", nullable = false)
+  private boolean isMultipleChoice;
+
+  @Column(name = "is_closed", nullable = false)
+  private boolean isClosed;
 
   @ManyToOne
   @JoinColumn(name = "quizzes_q_id", referencedColumnName = "q_id", nullable = false)
@@ -31,4 +37,7 @@ public class Question {
 
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Comment> comments;
+
+  @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<SolvedQuizAnswer> solvedQuizAnswers;
 }

@@ -1,5 +1,6 @@
 package com.wap.quizit.web.rest;
 
+import com.wap.quizit.model.Role;
 import com.wap.quizit.model.User;
 import com.wap.quizit.service.UserService;
 import com.wap.quizit.service.dto.LoginUserDTO;
@@ -68,6 +69,7 @@ public class UserRestController {
   public ResponseEntity<UserDTO> update(@RequestBody UserDTO dto) {
     if(userService.getById(dto.getId()).isPresent()) {
       var user = userMapper.map(dto);
+      checkConditions(user, dto);
       var saved = userService.save(user);
       return new ResponseEntity<>(userMapper.map(saved), HttpStatus.OK);
     } else {
@@ -79,5 +81,19 @@ public class UserRestController {
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
     userService.deleteById(id);
     return ResponseEntity.noContent().build();
+  }
+
+  protected void checkConditions(User user, UserDTO dto) {
+    if(user.getRole() == null) {
+      throw new EntityNotFoundException(Role.class, dto.getRole());
+    }
+    if(dto.getUsername().length() > 15) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "username", dto.getUsername(), "Username too long! Maximum 15 characters");
+    }
+    if(user.getPassword().length() > 60) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "password", "---", "Password too long! Maximum 60 characters");
+    }
   }
 }
