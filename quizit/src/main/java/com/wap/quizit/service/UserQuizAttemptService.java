@@ -7,8 +7,6 @@ import com.wap.quizit.repository.UserQuizAttemptRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +49,15 @@ public class UserQuizAttemptService {
     return solvedQuizzesRepository.save(solvedQuizzes);
   }
 
+  public UserQuizAttemptAnswer saveAnswer(UserQuizAttemptAnswer solvedQuizzes) {
+    return answerRepository.save(solvedQuizzes);
+  }
+
   public void deleteById(Long id) {
     solvedQuizzesRepository.deleteById(id);
+  }
+
+  public void deleteAnswerById(Long id) {
+    answerRepository.deleteById(id);
   }
 }

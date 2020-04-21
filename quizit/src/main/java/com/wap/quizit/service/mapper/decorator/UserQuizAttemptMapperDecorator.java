@@ -55,6 +55,7 @@ public abstract class UserQuizAttemptMapperDecorator implements UserQuizAttemptM
   @Override
   public UserQuizSummary mapToSummary(UserQuizAttempt entity) {
     var summary = UserQuizSummary.builder();
+    summary.attemptId(entity.getId());
     summary.user(entity.getUser().getId());
     summary.quiz(entity.getQuiz().getId());
     summary.attemptTime(entity.getAttemptTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));

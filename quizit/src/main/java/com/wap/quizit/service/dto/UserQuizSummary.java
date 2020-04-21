@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 public class UserQuizSummary {
 
+  @NotNull Long attemptId;
   @NotNull Long user;
   @NotNull Long quiz;
   @NotNull Integer maxPointsCount;
