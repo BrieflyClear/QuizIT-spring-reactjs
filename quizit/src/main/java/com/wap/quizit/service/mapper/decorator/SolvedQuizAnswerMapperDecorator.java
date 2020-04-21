@@ -1,6 +1,6 @@
 package com.wap.quizit.service.mapper.decorator;
 
-import com.wap.quizit.model.SolvedQuizAnswer;
+import com.wap.quizit.model.UserQuizAttempt;
 import com.wap.quizit.service.*;
 import com.wap.quizit.service.dto.SolvedQuizAnswerDTO;
 import com.wap.quizit.service.mapper.SolvedQuizAnswerMapper;
@@ -20,7 +20,7 @@ public abstract class SolvedQuizAnswerMapperDecorator implements SolvedQuizAnswe
   private UserService userService;
 
   @Override
-  public SolvedQuizAnswer map(SolvedQuizAnswerDTO dto) {
+  public UserQuizAttempt map(SolvedQuizAnswerDTO dto) {
     var userAnswer = delegate.map(dto);
     userAnswer.setQuestion(questionService.getById(dto.getQuestion()).orElse(null));
     userAnswer.setUser(userService.getById(dto.getUser()).orElse(null));

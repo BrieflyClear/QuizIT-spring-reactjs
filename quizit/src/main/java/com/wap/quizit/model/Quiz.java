@@ -37,4 +37,7 @@ public class Quiz {
 
   @OneToMany(mappedBy = "reportedQuiz", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Report> reportsIssued;
+
+  @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<UserQuizAttempt> attempts;
 }

@@ -48,6 +48,7 @@ public class UserService {
         .orElseThrow(() -> new EntityNotFoundException(Role.class, Constants.ROLE_USER)));
     user.setEmail(registerForm.getEmail());
     user.setPassword(registerForm.getPassword());
+    user.setActivePremium(false);
     user.setUsername(registerForm.getUsername());
     if(user.getUsername().length() > 15) {
       throw new EntityFieldValidationException(

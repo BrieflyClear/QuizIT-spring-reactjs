@@ -1,7 +1,7 @@
 package com.wap.quizit.web.rest;
 
 import com.wap.quizit.model.Question;
-import com.wap.quizit.model.SolvedQuizAnswer;
+import com.wap.quizit.model.UserQuizAttempt;
 import com.wap.quizit.model.User;
 import com.wap.quizit.service.SolvedQuizAnswerService;
 import com.wap.quizit.service.dto.SolvedQuizAnswerDTO;
@@ -38,14 +38,14 @@ public class SolvedQuizRestController {
     if(tmp.isPresent()) {
       return new ResponseEntity<>(solvedQuizAnswerMapper.map(tmp.get()), HttpStatus.OK);
     } else {
-      throw new EntityNotFoundException(SolvedQuizAnswer.class, id);
+      throw new EntityNotFoundException(UserQuizAttempt.class, id);
     }
   }
 
   @GetMapping("/{userId}/{quizId}")
   public ResponseEntity<List<SolvedQuizAnswerDTO>> getByUserAndSolvedQuiz(
       @PathVariable("userId") Long userId, @PathVariable("quizId") Long quizId) {
-    List<SolvedQuizAnswer> list = solvedQuizAnswerService.getByUserAndQuiz(userId, quizId);
+    List<UserQuizAttempt> list = solvedQuizAnswerService.getByUserAndQuiz(userId, quizId);
     List<SolvedQuizAnswerDTO> listDto = list.stream().map(solvedQuizAnswerMapper::map).collect(Collectors.toList());
     return new ResponseEntity<>(listDto, HttpStatus.OK);
   }
@@ -53,28 +53,28 @@ public class SolvedQuizRestController {
   @GetMapping("/{userId}/{quizId}/{questionId}")
   public ResponseEntity<List<SolvedQuizAnswerDTO>> getQuestionAnswersForQuiz(
       @PathVariable("userId") Long userId, @PathVariable("quizId") Long quizId, @PathVariable("questionId") Long questionId) {
-    List<SolvedQuizAnswer> list = solvedQuizAnswerService.getByUserAndQuizAndQuestion(userId, quizId, questionId);
+    List<UserQuizAttempt> list = solvedQuizAnswerService.getByUserAndQuizAndQuestion(userId, quizId, questionId);
     List<SolvedQuizAnswerDTO> listDto = list.stream().map(solvedQuizAnswerMapper::map).collect(Collectors.toList());
     return new ResponseEntity<>(listDto, HttpStatus.OK);
   }
 
   @PostMapping
   public ResponseEntity<SolvedQuizAnswerDTO> create(@RequestBody SolvedQuizAnswerDTO dto) {
-    SolvedQuizAnswer solvedQuizAnswer = solvedQuizAnswerMapper.map(dto);
-    solvedQuizAnswer.setId(Constants.DEFAULT_ID);
-    checkConditions(solvedQuizAnswer, dto);
-    var saved = solvedQuizAnswerService.save(solvedQuizAnswer);
+    UserQuizAttempt userQuizAttempt = solvedQuizAnswerMapper.map(dto);
+    userQuizAttempt.setId(Constants.DEFAULT_ID);
+    checkConditions(userQuizAttempt, dto);
+    var saved = solvedQuizAnswerService.save(userQuizAttempt);
     return new ResponseEntity<>(solvedQuizAnswerMapper.map(saved), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<SolvedQuizAnswerDTO> update(@RequestBody SolvedQuizAnswerDTO dto) {
     if(solvedQuizAnswerService.getById(dto.getId()).isEmpty()) {
-      throw new EntityNotFoundException(SolvedQuizAnswer.class, dto.getId());
+      throw new EntityNotFoundException(UserQuizAttempt.class, dto.getId());
     }
-    SolvedQuizAnswer solvedQuizAnswer = solvedQuizAnswerMapper.map(dto);
-    checkConditions(solvedQuizAnswer, dto);
-    var saved = solvedQuizAnswerService.save(solvedQuizAnswer);
+    UserQuizAttempt userQuizAttempt = solvedQuizAnswerMapper.map(dto);
+    checkConditions(userQuizAttempt, dto);
+    var saved = solvedQuizAnswerService.save(userQuizAttempt);
     return new ResponseEntity<>(solvedQuizAnswerMapper.map(saved), HttpStatus.OK);
   }
 
@@ -84,11 +84,11 @@ public class SolvedQuizRestController {
     return ResponseEntity.noContent().build();
   }
 
-  protected void checkConditions(SolvedQuizAnswer solvedQuizAnswer, SolvedQuizAnswerDTO dto) {
-    if(solvedQuizAnswer.getQuestion() == null) {
+  protected void checkConditions(UserQuizAttempt userQuizAttempt, SolvedQuizAnswerDTO dto) {
+    if(userQuizAttempt.getQuestion() == null) {
       throw new EntityNotFoundException(Question.class, dto.getQuestion());
     }
-    if(solvedQuizAnswer.getUser() == null) {
+    if(userQuizAttempt.getUser() == null) {
       throw new EntityNotFoundException(User.class, dto.getUser());
     }
   }

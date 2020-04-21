@@ -8,12 +8,14 @@ import com.wap.quizit.service.dto.RegisterUserDTO;
 import com.wap.quizit.service.dto.UserDTO;
 import com.wap.quizit.service.exception.*;
 import com.wap.quizit.service.mapper.UserMapper;
+import com.wap.quizit.util.Constants;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
@@ -87,13 +89,32 @@ public class UserRestController {
     if(user.getRole() == null) {
       throw new EntityNotFoundException(Role.class, dto.getRole());
     }
-    if(dto.getUsername().length() > 15) {
+    if(dto.getUsername().length() <= 3) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "username", dto.getUsername(), "Username too short! Minimum 4 characters");
+    } else if(dto.getUsername().length() > 15) {
       throw new EntityFieldValidationException(
           User.class.getSimpleName(), "username", dto.getUsername(), "Username too long! Maximum 15 characters");
+    } else if(!Pattern.matches(Constants.USERNAME_REGEX, dto.getUsername())) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "username", dto.getUsername(), "Wrong username characters!");
     }
-    if(user.getPassword().length() > 60) {
+    if(user.getPassword().length() <= 5) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "password", "---", "Password too short! Minimum 6 characters");
+    }else if(user.getPassword().length() > 60) {
       throw new EntityFieldValidationException(
           User.class.getSimpleName(), "password", "---", "Password too long! Maximum 60 characters");
+    }
+    if(user.getEmail().length() <= 4) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "email", "---", "Email too short! Minimum 5 characters");
+    }else if(user.getEmail().length() > 50) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "email", "---", "Email too long! Maximum 50 characters");
+    } else if(!Pattern.matches(Constants.EMAIL_REGEX, user.getEmail())) {
+      throw new EntityFieldValidationException(
+          User.class.getSimpleName(), "email", user.getEmail(), "Wrong email characters!");
     }
   }
 }

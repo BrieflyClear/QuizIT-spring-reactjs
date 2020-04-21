@@ -10,8 +10,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "solved_quiz_answers")
-public class SolvedQuizAnswer {
+@Table(name = "users_quizzes_attempts_answers")
+public class UserQuizAttemptAnswer {
 
   @Id
   @Column(name = "sqa_id")
@@ -19,8 +19,8 @@ public class SolvedQuizAnswer {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "users_u_id", referencedColumnName = "u_id", nullable = false)
-  private User user;
+  @JoinColumn(name = "users_quizzes_attempts_sqa_id", referencedColumnName = "uqa_id", nullable = false)
+  private UserQuizAttempt attempt;
 
   @ManyToOne
   @JoinColumn(name = "questions_question_id", referencedColumnName = "question_id", nullable = false)

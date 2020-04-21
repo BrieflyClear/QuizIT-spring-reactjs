@@ -1,6 +1,6 @@
 package com.wap.quizit.service;
 
-import com.wap.quizit.model.SolvedQuizAnswer;
+import com.wap.quizit.model.UserQuizAttempt;
 import com.wap.quizit.repository.SolvedQuizAnswerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,35 +14,35 @@ public class SolvedQuizAnswerService {
 
   private SolvedQuizAnswerRepository solvedQuizzesRepository;
 
-  public Optional<SolvedQuizAnswer> getById(Long id) {
+  public Optional<UserQuizAttempt> getById(Long id) {
     return solvedQuizzesRepository.findById(id);
   }
 
-  public List<SolvedQuizAnswer> getAll() {
+  public List<UserQuizAttempt> getAll() {
     return solvedQuizzesRepository.findAll();
   }
 
-  public List<SolvedQuizAnswer> getByUser(Long user) {
+  public List<UserQuizAttempt> getByUser(Long user) {
     return solvedQuizzesRepository.findByUserId(user);
   }
 
-  public List<SolvedQuizAnswer> getByQuiz(Long quiz) {
+  public List<UserQuizAttempt> getByQuiz(Long quiz) {
     return solvedQuizzesRepository.findByQuestionQuizId(quiz);
   }
 
-  public List<SolvedQuizAnswer> getByQuestion(Long question) {
+  public List<UserQuizAttempt> getByQuestion(Long question) {
     return solvedQuizzesRepository.findByQuestionId(question);
   }
 
-  public List<SolvedQuizAnswer> getByUserAndQuiz(Long user, Long quiz) {
+  public List<UserQuizAttempt> getByUserAndQuiz(Long user, Long quiz) {
     return solvedQuizzesRepository.findByUserIdAndQuestionQuizId(user, quiz);
   }
 
-  public List<SolvedQuizAnswer> getByUserAndQuizAndQuestion(Long user, Long quiz, Long question) {
+  public List<UserQuizAttempt> getByUserAndQuizAndQuestion(Long user, Long quiz, Long question) {
     return solvedQuizzesRepository.findByUserIdAndQuestionQuizIdAndQuestionId(user, quiz, question);
   }
 
-  public SolvedQuizAnswer save(SolvedQuizAnswer solvedQuizzes) {
+  public UserQuizAttempt save(UserQuizAttempt solvedQuizzes) {
     return solvedQuizzesRepository.save(solvedQuizzes);
   }
 

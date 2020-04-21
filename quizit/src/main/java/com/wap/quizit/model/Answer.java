@@ -36,5 +36,5 @@ public class Answer {
   private Question question;
 
   @OneToMany(mappedBy = "answerGiven", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<SolvedQuizAnswer> solvedQuizAnswers;
+  private Set<UserQuizAttemptAnswer> userQuizAttemptAnswers;
 }

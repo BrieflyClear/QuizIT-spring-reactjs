@@ -1,6 +1,6 @@
 package com.wap.quizit.service.mapper;
 
-import com.wap.quizit.model.SolvedQuizAnswer;
+import com.wap.quizit.model.UserQuizAttempt;
 import com.wap.quizit.service.dto.SolvedQuizAnswerDTO;
 import com.wap.quizit.service.mapper.decorator.SolvedQuizAnswerMapperDecorator;
 import org.mapstruct.DecoratedWith;
@@ -15,10 +15,10 @@ public interface SolvedQuizAnswerMapper {
   @Mapping(target = "question", source = "entity.question.id")
   @Mapping(target = "user", source = "entity.user.id")
   @Mapping(target = "answerGiven", source = "entity.answerGiven.id")
-  SolvedQuizAnswerDTO map(SolvedQuizAnswer entity);
+  SolvedQuizAnswerDTO map(UserQuizAttempt entity);
 
   @Mapping(target = "question", ignore = true)
   @Mapping(target = "user", ignore = true)
   @Mapping(target = "answerGiven", ignore = true)
-  SolvedQuizAnswer map(SolvedQuizAnswerDTO dto);
+  UserQuizAttempt map(SolvedQuizAnswerDTO dto);
 }

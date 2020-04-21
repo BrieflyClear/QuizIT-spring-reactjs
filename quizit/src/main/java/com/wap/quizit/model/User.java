@@ -45,5 +45,5 @@ public class User {
   private Set<Comment> comments;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<SolvedQuizAnswer> solvedQuestions;
+  private Set<UserQuizAttempt> quizAttempts;
 }

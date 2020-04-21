@@ -11,7 +11,7 @@ CREATE TABLE Answers
     a_id                  NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) ,
     answer_contents       VARCHAR2 (4000) NOT NULL ,
     is_correct               NUMBER NOT NULL ,
-    points_count NUMBER (2) ,
+    points_count NUMBER (2) NOT NULL,
     Questions_question_id NUMBER NOT NULL
   ) ;
 ALTER TABLE Answers ADD CONSTRAINT Answers_PK PRIMARY KEY ( a_id ) ;
