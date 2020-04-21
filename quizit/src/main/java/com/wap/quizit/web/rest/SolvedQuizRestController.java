@@ -3,7 +3,7 @@ package com.wap.quizit.web.rest;
 import com.wap.quizit.model.Question;
 import com.wap.quizit.model.UserQuizAttempt;
 import com.wap.quizit.model.User;
-import com.wap.quizit.service.SolvedQuizAnswerService;
+import com.wap.quizit.service.UserQuizAttemptService;
 import com.wap.quizit.service.dto.SolvedQuizAnswerDTO;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.SolvedQuizAnswerMapper;
@@ -22,19 +22,19 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SolvedQuizRestController {
 
-  private SolvedQuizAnswerService solvedQuizAnswerService;
+  private UserQuizAttemptService userQuizAttemptService;
   private SolvedQuizAnswerMapper solvedQuizAnswerMapper;
 
   @GetMapping
   public ResponseEntity<List<SolvedQuizAnswerDTO>> getAll() {
-    List<SolvedQuizAnswerDTO> list = solvedQuizAnswerService.getAll()
+    List<SolvedQuizAnswerDTO> list = userQuizAttemptService.getAll()
         .stream().map(solvedQuizAnswerMapper::map).collect(Collectors.toList());
     return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<SolvedQuizAnswerDTO> get(@PathVariable Long id) {
-    var tmp = solvedQuizAnswerService.getById(id);
+    var tmp = userQuizAttemptService.getById(id);
     if(tmp.isPresent()) {
       return new ResponseEntity<>(solvedQuizAnswerMapper.map(tmp.get()), HttpStatus.OK);
     } else {
@@ -45,7 +45,7 @@ public class SolvedQuizRestController {
   @GetMapping("/{userId}/{quizId}")
   public ResponseEntity<List<SolvedQuizAnswerDTO>> getByUserAndSolvedQuiz(
       @PathVariable("userId") Long userId, @PathVariable("quizId") Long quizId) {
-    List<UserQuizAttempt> list = solvedQuizAnswerService.getByUserAndQuiz(userId, quizId);
+    List<UserQuizAttempt> list = userQuizAttemptService.getByUserAndQuiz(userId, quizId);
     List<SolvedQuizAnswerDTO> listDto = list.stream().map(solvedQuizAnswerMapper::map).collect(Collectors.toList());
     return new ResponseEntity<>(listDto, HttpStatus.OK);
   }
@@ -53,7 +53,7 @@ public class SolvedQuizRestController {
   @GetMapping("/{userId}/{quizId}/{questionId}")
   public ResponseEntity<List<SolvedQuizAnswerDTO>> getQuestionAnswersForQuiz(
       @PathVariable("userId") Long userId, @PathVariable("quizId") Long quizId, @PathVariable("questionId") Long questionId) {
-    List<UserQuizAttempt> list = solvedQuizAnswerService.getByUserAndQuizAndQuestion(userId, quizId, questionId);
+    List<UserQuizAttempt> list = userQuizAttemptService.getByUserAndQuizAndQuestion(userId, quizId, questionId);
     List<SolvedQuizAnswerDTO> listDto = list.stream().map(solvedQuizAnswerMapper::map).collect(Collectors.toList());
     return new ResponseEntity<>(listDto, HttpStatus.OK);
   }
@@ -63,24 +63,24 @@ public class SolvedQuizRestController {
     UserQuizAttempt userQuizAttempt = solvedQuizAnswerMapper.map(dto);
     userQuizAttempt.setId(Constants.DEFAULT_ID);
     checkConditions(userQuizAttempt, dto);
-    var saved = solvedQuizAnswerService.save(userQuizAttempt);
+    var saved = userQuizAttemptService.save(userQuizAttempt);
     return new ResponseEntity<>(solvedQuizAnswerMapper.map(saved), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<SolvedQuizAnswerDTO> update(@RequestBody SolvedQuizAnswerDTO dto) {
-    if(solvedQuizAnswerService.getById(dto.getId()).isEmpty()) {
+    if(userQuizAttemptService.getById(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(UserQuizAttempt.class, dto.getId());
     }
     UserQuizAttempt userQuizAttempt = solvedQuizAnswerMapper.map(dto);
     checkConditions(userQuizAttempt, dto);
-    var saved = solvedQuizAnswerService.save(userQuizAttempt);
+    var saved = userQuizAttemptService.save(userQuizAttempt);
     return new ResponseEntity<>(solvedQuizAnswerMapper.map(saved), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-    solvedQuizAnswerService.deleteById(id);
+    userQuizAttemptService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
 

@@ -2,6 +2,7 @@ package com.wap.quizit.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"quiz", "category"})
 @Entity
 @Table(name = "quizzes_categories")
 public class QuizCategory {

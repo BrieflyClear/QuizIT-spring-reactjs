@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class SolvedQuizAnswerService {
+public class UserQuizAttemptService {
 
   private SolvedQuizAnswerRepository solvedQuizzesRepository;
 
