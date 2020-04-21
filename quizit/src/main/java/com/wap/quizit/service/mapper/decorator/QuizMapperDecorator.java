@@ -41,7 +41,8 @@ public abstract class QuizMapperDecorator implements QuizMapper {
     dto.getCategories().forEach(id -> {
       boolean added = false;
       if(savedQuiz.isPresent()) {
-        added = quizCategoryService.getByQuizAndCategoryIdNoException(dto.getId(), id).map(categories::add)
+        added = quizCategoryService.getByQuizAndCategoryIdNoException(dto.getId(), id)
+            .map(categories::add)
             .orElse(false);
       }
       if(!added) {
@@ -55,6 +56,7 @@ public abstract class QuizMapperDecorator implements QuizMapper {
     Set<Report> reports = new HashSet<>();
     dto.getReportsIssued().forEach(id -> reports.add(reportService.getById(id)));
     quiz.setReportsIssued(reports);
+    quiz.setAttempts(savedQuiz.map(Quiz::getAttempts).orElse(new HashSet<>()));
     return quiz;
   }
 }

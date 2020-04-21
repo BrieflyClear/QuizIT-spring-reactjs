@@ -28,6 +28,7 @@ public interface QuestionMapper {
   @Mapping(target = "quiz", ignore = true)
   @Mapping(target = "answers", ignore = true)
   @Mapping(target = "comments", ignore = true)
+  @Mapping(target = "userQuizAttemptsAnswers", ignore = true)
   @Mapping(target = "closed", source = "dto.isClosed")
   @Mapping(target = "multipleChoice", source = "dto.isMultipleChoice")
   Question map(QuestionDTO dto);

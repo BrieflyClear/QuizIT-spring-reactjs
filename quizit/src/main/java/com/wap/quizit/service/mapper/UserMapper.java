@@ -33,6 +33,7 @@ public interface UserMapper {
   @Mapping(target = "reportsIssued", ignore = true)
   @Mapping(target = "email", ignore = true)
   @Mapping(target = "password", ignore = true)
+  @Mapping(target = "quizAttempts", ignore = true)
   @Mapping(target = "activePremium", source = "dto.isPremium")
   User map(UserDTO dto);
 
@@ -43,6 +44,7 @@ public interface UserMapper {
   @Mapping(target = "email", ignore = true)
   @Mapping(target = "password", ignore = true)
   @Mapping(target = "activePremium", ignore = true)
+  @Mapping(target = "quizAttempts", ignore = true)
   User map(RegisterUserDTO registerForm);
 
   default List<Long> convertQuizzes(Set<Quiz> list) {

@@ -20,5 +20,6 @@ public interface AnswerMapper {
   @Mapping(target = "question", ignore = true)
   @Mapping(target = "correct", source = "isCorrect")
   @Mapping(target = "pointsCount", source = "dto.pointsCount")
+  @Mapping(target = "userQuizAttemptAnswers", ignore = true)
   Answer map(AnswerDTO dto);
 }

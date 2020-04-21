@@ -1,5 +1,6 @@
 package com.wap.quizit.service.mapper.decorator;
 
+import com.wap.quizit.service.QuestionService;
 import com.wap.quizit.service.dto.QuestionDTO;
 import com.wap.quizit.service.mapper.QuestionMapper;
 import com.wap.quizit.model.Answer;
@@ -25,6 +26,8 @@ public abstract class QuestionMapperDecorator implements QuestionMapper {
   private AnswerService answerService;
   @Autowired
   private CommentService commentService;
+  @Autowired
+  private QuestionService questionService;
 
   @Override
   public Question map(QuestionDTO dto) {
@@ -36,6 +39,10 @@ public abstract class QuestionMapperDecorator implements QuestionMapper {
     dto.getComments().forEach(id -> comments.add(commentService.getById(id)));
     question.setComments(comments);
     question.setAnswers(answers);
+    question.setUserQuizAttemptsAnswers(
+        questionService.getByIdNoException(dto.getId())
+            .map(Question::getUserQuizAttemptsAnswers)
+            .orElse(new HashSet<>()));
     return question;
   }
 }

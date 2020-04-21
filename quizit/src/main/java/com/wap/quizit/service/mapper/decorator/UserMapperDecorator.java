@@ -43,6 +43,7 @@ public abstract class UserMapperDecorator implements UserMapper {
     user.setComments(comments);
     user.setQuizzes(quizzes);
     user.setReportsIssued(reports);
+    user.setQuizAttempts(userService.getByIdNoException(dto.getId()).map(User::getQuizAttempts).orElse(new HashSet<>()));
     return user;
   }
 
