@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class UserQuizAttemptMapperDecorator implements UserQuizAttemptMapper {
@@ -71,10 +68,15 @@ public abstract class UserQuizAttemptMapperDecorator implements UserQuizAttemptM
       List<Answer> list = entity.getAttemptAnswers().stream()
           .filter(it -> it.getQuestion().getId().equals(question.getId())).map(UserQuizAttemptAnswer::getAnswerGiven)
           .collect(Collectors.toList());
-      int pointsGained = list.stream().map(Answer::getPointsCount).mapToInt(Integer::intValue).sum();
-      questionSummary.pointsGained(pointsGained);
-      List<Long> ids = list.stream().map(Answer::getId).collect(Collectors.toList());
-      questionSummary.answersGiven(ids);
+      if(list.size() > 1) {
+        int pointsGained = list.stream().map(Answer::getPointsCount).mapToInt(Integer::intValue).sum();
+        questionSummary.pointsGained(pointsGained);
+        List<Long> ids = list.stream().map(Answer::getId).collect(Collectors.toList());
+        questionSummary.answersGiven(ids);
+      } else {
+        questionSummary.pointsGained(maxPoints);
+        questionSummary.answersGiven(Collections.emptyList());
+      }
       questionSummaries.add(questionSummary.build());
     });
     summary.maxPointsCount(questionSummaries.stream()

@@ -1,5 +1,6 @@
 package com.wap.quizit.service.mapper;
 
+import com.wap.quizit.model.Answer;
 import com.wap.quizit.model.UserQuizAttempt;
 import com.wap.quizit.model.UserQuizAttemptAnswer;
 import com.wap.quizit.service.dto.UserQuizAttemptAnswerDTO;
@@ -35,7 +36,7 @@ public interface UserQuizAttemptMapper {
 
   @Mapping(target = "question", source = "entity.question.id")
   @Mapping(target = "attempt", source = "entity.attempt.id")
-  @Mapping(target = "answerGiven", source = "entity.answerGiven.id")
+  @Mapping(target = "answerGiven", expression = "java(convertAnswerGiven(entity.getAnswerGiven()))")
   UserQuizAttemptAnswerDTO map(UserQuizAttemptAnswer entity);
 
   @Mapping(target = "question", ignore = true)
@@ -49,5 +50,13 @@ public interface UserQuizAttemptMapper {
 
   default List<Long> convert(Set<UserQuizAttemptAnswer> list) {
     return list.stream().map(UserQuizAttemptAnswer::getId).collect(Collectors.toList());
+  }
+
+  default Long convertAnswerGiven(Answer answer) {
+    if(answer != null) {
+      return answer.getId();
+    } else {
+      return null;
+    }
   }
 }

@@ -12,5 +12,5 @@ public class UserQuizAttemptAnswerDTO {
   @NotNull Long id;
   @NotNull Long attempt;
   @NotNull Long question;
-  @NotNull Long answerGiven;
+  Long answerGiven;
 }
