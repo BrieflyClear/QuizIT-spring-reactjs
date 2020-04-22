@@ -1,10 +1,8 @@
 package com.wap.quizit.web.rest;
 
 import com.wap.quizit.model.Answer;
-import com.wap.quizit.model.Question;
 import com.wap.quizit.service.AnswerService;
 import com.wap.quizit.service.dto.AnswerDTO;
-import com.wap.quizit.service.exception.EntityFieldValidationException;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.AnswerMapper;
 import com.wap.quizit.util.Constants;
@@ -40,7 +38,7 @@ public class AnswerRestController {
   public ResponseEntity<AnswerDTO> create(@RequestBody AnswerDTO dto) {
     Answer answer = answerMapper.map(dto);
     answer.setId(Constants.DEFAULT_ID);
-    checkConditions(answer, dto);
+    //checkConditions(answer, dto);
     var saved = answerService.save(answer);
     return new ResponseEntity<>(answerMapper.map(saved), HttpStatus.OK);
   }
@@ -51,7 +49,7 @@ public class AnswerRestController {
       throw new EntityNotFoundException(Answer.class, dto.getId());
     }
     Answer answer = answerMapper.map(dto);
-    checkConditions(answer, dto);
+    //checkConditions(answer, dto);
     var saved = answerService.save(answer);
     return new ResponseEntity<>(answerMapper.map(saved), HttpStatus.OK);
   }
@@ -60,19 +58,5 @@ public class AnswerRestController {
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
     answerService.deleteById(id);
     return ResponseEntity.noContent().build();
-  }
-
-  protected void checkConditions(Answer answer, AnswerDTO dto) {
-    if(answer.getQuestion() == null) {
-      throw new EntityNotFoundException(Question.class, dto.getQuestion());
-    }
-    if(answer.isCorrect() && answer.getPointsCount() <= 0) {
-      throw new EntityFieldValidationException(Answer.class.getSimpleName(),
-          "pointsCount", dto.getPointsCount(), "Correct answer must give more than 0 points!");
-    }
-    if(!answer.isCorrect() && answer.getPointsCount() > 0) {
-      throw new EntityFieldValidationException(Answer.class.getSimpleName(),
-          "pointsCount", dto.getPointsCount(), "Not correct answer must give 0 or less points!");
-    }
   }
 }

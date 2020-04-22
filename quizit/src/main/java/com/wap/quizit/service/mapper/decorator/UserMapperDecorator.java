@@ -4,8 +4,6 @@ import com.wap.quizit.model.*;
 import com.wap.quizit.service.*;
 import com.wap.quizit.service.dto.RegisterUserDTO;
 import com.wap.quizit.service.dto.UserDTO;
-import com.wap.quizit.service.exception.EntityFieldValidationException;
-import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.UserMapper;
 import com.wap.quizit.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +53,7 @@ public abstract class UserMapperDecorator implements UserMapper {
     user.setQuizzes(new HashSet<>());
     user.setComments(new HashSet<>());
     user.setQuizAttempts(new HashSet<>());
-    user.setRole(roleService.getById(Constants.ROLE_USER));
+    user.setRole(roleService.getById(Constants.ROLE_USER_ID));
     user.setEmail(registerForm.getEmail());
     user.setPassword(registerForm.getPassword());
     user.setActivePremium(false);

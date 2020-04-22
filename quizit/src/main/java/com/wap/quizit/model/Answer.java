@@ -16,9 +16,6 @@ import java.util.Set;
 @Table(name = "answers")
 public class Answer {
 
-  public static final Integer MAX_POINT_COUNT = 50;
-  public static final Integer MIN_POINT_COUNT = -50;
-
   @Id
   @Column(name = "a_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
