@@ -12,12 +12,12 @@ public class Constants {
   public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,15}$";
   public static final Integer MIN_EMAIL_LENGTH = 5;
   public static final Integer MAX_EMAIL_LENGTH = 50;
-  public static final String ROLE_REGEX = "^[a-zA-Z0-9_- ]{3,15}$";
-  public static final String REPORT_TITLE_REGEX = "^[a-zA-Z0-9_- ]{3,50}$";
-  public static final String REPORT_DESCRIPTION_REGEX = "^[a-zA-Z0-9_- ]{3,200}$";
-  public static final String REPORT_STATUS_REGEX = "^[a-zA-Z0-9_- ]{3,20}$";
-  public static final String CATEGORY_REGEX = "^[a-zA-Z0-9_- ]{3,40}$";
-  public static final String COMMENT_REGEX = "^[a-zA-Z0-9_- ]{1,200}$";
+  public static final String ROLE_REGEX = "^[a-zA-Z0-9 _-]{3,15}$";
+  public static final String REPORT_TITLE_REGEX = "^[a-zA-Z0-9 _-]{3,50}$";
+  public static final String REPORT_DESCRIPTION_REGEX = "^[a-zA-Z0-9 _-]{3,200}$";
+  public static final String REPORT_STATUS_REGEX = "^[a-zA-Z0-9 _-]{3,20}$";
+  public static final String CATEGORY_REGEX = "^[a-zA-Z0-9 _-]{3,40}$";
+  public static final String COMMENT_REGEX = "^[a-zA-Z0-9 _-]{1,200}$";
 
   public static final String ADMIN = "ROLE_ADMIN";
   public static final String USER = "ROLE_USER";
