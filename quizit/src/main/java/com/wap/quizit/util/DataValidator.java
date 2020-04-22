@@ -1,6 +1,8 @@
 package com.wap.quizit.util;
 
 import com.wap.quizit.model.*;
+import com.wap.quizit.service.exception.AttemptAnswerNotMatchingQuestion;
+import com.wap.quizit.service.exception.AttemptAnswerNotMatchingQuiz;
 import com.wap.quizit.service.exception.EntityFieldValidationException;
 
 import java.util.regex.Pattern;
@@ -196,12 +198,17 @@ public class DataValidator {
     }
   }
 
-  // TODO listed below
   public static void validateUserQuizAttempt(UserQuizAttempt attempt) {
-
+    attempt.getAttemptAnswers().forEach(DataValidator::validateUserQuizAttemptAnswer);
   }
 
   public static void validateUserQuizAttemptAnswer(UserQuizAttemptAnswer attemptAnswer) {
-
+    if(!attemptAnswer.getAttempt().getQuiz().getId().equals(attemptAnswer.getQuestion().getQuiz().getId())) {
+      throw new AttemptAnswerNotMatchingQuiz(attemptAnswer.getId(), attemptAnswer.getAttempt().getId());
+    }
+    if(attemptAnswer.getQuestion().getAnswers()
+        .stream().noneMatch(it -> it.getId().equals(attemptAnswer.getAnswerGiven().getId()))) {
+      throw new AttemptAnswerNotMatchingQuestion(attemptAnswer.getId(), attemptAnswer.getQuestion().getId());
+    }
   }
 }
