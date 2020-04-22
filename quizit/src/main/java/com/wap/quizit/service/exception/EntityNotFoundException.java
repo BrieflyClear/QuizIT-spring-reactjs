@@ -14,4 +14,8 @@ public class EntityNotFoundException extends RuntimeException {
   public EntityNotFoundException(Class clazz, String id) {
     super(clazz.getSimpleName() + " with unique name [" + id + "] not found!");
   }
+
+  public EntityNotFoundException(Class clazz, Long id, Class clazz2, Long id2) {
+    super(clazz.getSimpleName() + " with ID [" + id + "] not found in " + clazz2.getSimpleName() + " with ID [" + id2 + "]!");
+  }
 }

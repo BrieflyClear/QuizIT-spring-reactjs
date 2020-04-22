@@ -4,8 +4,14 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class Constants {
 
+  public static final String ADMIN = "Admin";
+  public static final String USER = "User";
+  public static final String ANONYMOUS = "Anonymous";
+
+  public static final Long ROLE_USER_ID = 2L;
+  public static final Long ROLE_ADMIN_ID = 1L;
+
   public static final Long DEFAULT_ID = 0L;
-  public static final Long ROLE_USER_ID = 1L;
 
   public static final String USERNAME_REGEX = "^[a-zA-Z0-9_-]{4,15}$";
   public static final String EMAIL_REGEX = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$";
@@ -19,14 +25,12 @@ public class Constants {
   public static final String CATEGORY_REGEX = "^[a-zA-Z0-9 _-]{3,40}$";
   public static final String COMMENT_REGEX = "^[a-zA-Z0-9 _-]{1,200}$";
   public static final String QUIZ_REGEX = "^[a-zA-Z0-9 _-]{3,50}$";
-
-  public static final String ADMIN = "ROLE_ADMIN";
-  public static final String USER = "ROLE_USER";
-  public static final String ANONYMOUS = "ROLE_ANONYMOUS";
+  public static final String QUESTION_REGEX = "^[.]{3,1000}$";
+  public static final String ANSWER_REGEX = "^[.]{3,4000}$";
 
   public static final Integer ANSWER_MAX_POINT_COUNT = 50;
   public static final Integer ANSWER_MIN_POINT_COUNT = -50;
-  public static final Integer ANSWER_OPEN_POINTS = 0;
+  public static final Integer OPEN_QUESTION_ANSWER_POINTS = 0;
 
   public static String getApplicationName() {
     return applicationName;

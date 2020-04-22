@@ -98,53 +98,105 @@ public class DataValidator {
     }
   }
 
-  // TODO listed below
   public static void validateQuestion(Question question) {
+    if(!Pattern.matches(Constants.QUESTION_REGEX, question.getContents())) {
+      throw new EntityFieldValidationException(
+          Question.class.getSimpleName(), "contents", question.getContents(), "Question is too short or too long! " +
+          "Length must be in range 3-1000 characters.");
+    }
+    validateQuestionAnswers(question);
+    if(!question.getUserQuizAttemptsAnswers().isEmpty()
+      && !question.getUserQuizAttemptsAnswers().stream().map(UserQuizAttemptAnswer::getQuestion)
+        .mapToLong(Question::getId).allMatch(a -> a == question.getId())) {
+        throw new EntityFieldValidationException(
+            Question.class.getSimpleName(), "userQuizAttemptsAnswers", "---",
+            "UserQuizAttemptsAnswers do not refer to the question!");
+    }
+  }
 
-    return;
-    /*
+  public static void validateQuestionAnswers(Question question) {
     if(!question.getAnswers().isEmpty()) {
-      final String answers = "answers";
+      question.getAnswers().forEach(DataValidator::validateAnswer);
+      if(!question.isClosed()) {
+        validateOpenQuestion(question);
+      } else { /** closed question */
+         if(question.getAnswers().stream().noneMatch(Answer::isCorrect)) {
+           throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers", "---",
+               "At least one answer must be correct!");
+         }
+        /** multiple choice questions don't have any special requirements */
+        if(!question.isMultipleChoice()) {
+          if(question.getAnswers().stream().map(Answer::isCorrect).count() > 1) {
+            throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers", "---",
+                "Non multiple-choice question cannot have multiple correct answers!");
+          }
+        }
+      }
+    } else {
+      throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers",
+          "count: " + question.getAnswers().size(), "Question must have answers!");
+    }
+  }
+
+  public static void validateOpenQuestion(Question question) {
+    if(question.isMultipleChoice()) {
+      throw new EntityFieldValidationException(Question.class.getSimpleName(), "isMultipleChoice",
+          question.isMultipleChoice(), "Question cannot be open and multiple choice at once!");
+    } else if(question.getAnswers().size() > 1) {
+      throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers",
+          "count: " + question.getAnswers().size(),
+          "Question that is not a closed question must have only one answer!");
+    } else if(question.getAnswers().size() == 1) {
       if(question.getAnswers().stream().noneMatch(Answer::isCorrect)) {
-        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "At least one answer must be correct!");
+        throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers", "correct: false",
+            "Question that is not a closed question must have only one answer that is correct!");
+      } else if(question.getAnswers().stream().noneMatch(a -> a.getPointsCount()
+          .equals(Constants.OPEN_QUESTION_ANSWER_POINTS))) {
+        throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers",
+            "points count: " + question.getAnswers().stream().mapToInt(Answer::getPointsCount).sum(),
+            "Question that is not a closed question must have only "
+                + Constants.OPEN_QUESTION_ANSWER_POINTS + " points!");
       }
-      if(question.isClosed() && !question.isMultipleChoice() && question.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {
-        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a multiple-choice question cannot have multiple correct answers!");
-      }
-      if(!question.isClosed() && !question.isMultipleChoice() && question.getAnswers().size() > 1) {
-        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a closed question must have only one answer!");
-      } else if(!question.isClosed() && !question.isMultipleChoice() && question.getAnswers().size() == 1 && question.getAnswers().stream().noneMatch(Answer::isCorrect)) {
-        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a closed question must have only one answer that is correct!");
-      }
-    }*/
+    }
   }
 
   public static void validateAnswer(Answer answer) {
-
-    return;
-/*
-    if(answer.getPointsCount() > Constants.ANSWER_MAX_POINT_COUNT || answer.getPointsCount() < Constants.ANSWER_MIN_POINT_COUNT) {
-      throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount", answer.getPointsCount(), "Points must be in range (" + Constants.ANSWER_MIN_POINT_COUNT + ", " + Constants.ANSWER_MAX_POINT_COUNT + ")!");
-    } else {
-      if(!answer.getQuestion().isClosed()) {
-        if(answer.getQuestion().getAnswers().size() > 1) {
-          throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers", "count: " + answer.getQuestion().getAnswers().size(), "Open questions must have only one answer!");
-        } else if(!answer.isCorrect()) {
-          throw new EntityFieldValidationException(Answer.class.getSimpleName(), "isCorrect", answer.isCorrect(), "Open questions must have only correct answer!");
-        } else if(!answer.getPointsCount().equals(Constants.ANSWER_OPEN_POINTS)) {
-          throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount", answer.getPointsCount(), "Open question's answer must give 0 points!");
-        }
-      } else {
-        if(answer.isCorrect() && answer.getPointsCount() <= 0) {
-          throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount", answer.getPointsCount(), "Correct answer must give more than 0 points!");
-        }
-        if(!answer.isCorrect() && answer.getPointsCount() > 0) {
-          throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount", answer.getPointsCount(), "Not correct answer must give 0 or less points!");
-        }
-      }
-    }*/
+    if(!Pattern.matches(Constants.ANSWER_REGEX, answer.getContents())) {
+      throw new EntityFieldValidationException(
+          Answer.class.getSimpleName(), "contents", answer.getContents(), "Question is too short or too long! " +
+          "Length must be in range 3-4000 characters.");
+    }
+    validateAnswerPoints(answer);
+    if(!answer.getUserQuizAttemptAnswers().isEmpty()
+        && !answer.getUserQuizAttemptAnswers().stream().map(UserQuizAttemptAnswer::getAnswerGiven)
+        .mapToLong(Answer::getId).allMatch(a -> a == answer.getId())) {
+      throw new EntityFieldValidationException(
+          Question.class.getSimpleName(), "userQuizAttemptsAnswers", "---",
+          "UserQuizAttemptsAnswers do not refer to the answer!");
+    }
   }
 
+  public static void validateAnswerPoints(Answer answer) {
+    if(answer.getPointsCount() > Constants.ANSWER_MAX_POINT_COUNT
+        || answer.getPointsCount() < Constants.ANSWER_MIN_POINT_COUNT) {
+      throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount", answer.getPointsCount(),
+          "Points must be in range (" + Constants.ANSWER_MIN_POINT_COUNT + ", "
+              + Constants.ANSWER_MAX_POINT_COUNT + ")!");
+    } else {
+      if(answer.getQuestion().isClosed()) {
+        if(answer.isCorrect() && answer.getPointsCount() <= 0) {
+          throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount",
+              answer.getPointsCount(), "Correct answer must give more than 0 points!");
+        }
+        if(!answer.isCorrect() && answer.getPointsCount() > 0) {
+          throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount",
+              answer.getPointsCount(), "Wrong answer must give 0 or less points!");
+        }
+      }
+    }
+  }
+
+  // TODO listed below
   public static void validateUserQuizAttempt(UserQuizAttempt attempt) {
 
   }

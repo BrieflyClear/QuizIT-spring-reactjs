@@ -5,6 +5,7 @@ import com.wap.quizit.model.Question;
 import com.wap.quizit.service.AnswerService;
 import com.wap.quizit.service.QuestionService;
 import com.wap.quizit.service.dto.AnswerDTO;
+import com.wap.quizit.service.dto.CreateAnswerDTO;
 import com.wap.quizit.service.mapper.AnswerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +19,6 @@ public abstract class AnswerMapperDecorator implements AnswerMapper {
   private AnswerMapper delegate;
   @Autowired
   private QuestionService questionService;
-
   @Autowired
   private AnswerService answerService;
 
@@ -31,6 +31,14 @@ public abstract class AnswerMapperDecorator implements AnswerMapper {
         answerService.getByIdNoException(dto.getId())
             .map(Answer::getUserQuizAttemptAnswers)
             .orElse(new HashSet<>()));
+    return answer;
+  }
+
+  @Override
+  public Answer map(CreateAnswerDTO dto) {
+    var answer = delegate.map(dto);
+    answer.setQuestion(null);
+    answer.setUserQuizAttemptAnswers(new HashSet<>());
     return answer;
   }
 }
