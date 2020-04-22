@@ -6,11 +6,13 @@ import com.wap.quizit.service.dto.ReportDTO;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.ReportMapper;
 import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +27,7 @@ public class ReportRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ReportDTO> get(@PathVariable Long id) {
-    var tmp = reportService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(reportMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(Report.class, id);
-    }
+    return new ResponseEntity<>(reportMapper.map(reportService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -43,16 +40,19 @@ public class ReportRestController {
   public ResponseEntity<ReportDTO> create(@RequestBody ReportDTO dto) {
     Report report = reportMapper.map(dto);
     report.setId(Constants.DEFAULT_ID);
+    report.setIssuedTime(LocalDateTime.now());
+    DataValidator.validateReport(report);
     var saved = reportService.save(report);
     return new ResponseEntity<>(reportMapper.map(saved), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<ReportDTO> update(@RequestBody ReportDTO dto) {
-    if(reportService.getById(dto.getId()).isEmpty()) {
+    if(reportService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(Report.class, dto.getId());
     }
     Report report = reportMapper.map(dto);
+    DataValidator.validateReport(report);
     var saved = reportService.save(report);
     return new ResponseEntity<>(reportMapper.map(saved), HttpStatus.OK);
   }

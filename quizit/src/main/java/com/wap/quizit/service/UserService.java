@@ -1,10 +1,13 @@
 package com.wap.quizit.service;
 
+import com.wap.quizit.model.Role;
 import com.wap.quizit.model.User;
 import com.wap.quizit.repository.RoleRepository;
 import com.wap.quizit.repository.UserRepository;
 import com.wap.quizit.service.dto.RegisterUserDTO;
-import com.wap.quizit.service.exception.RoleNotFoundException;
+import com.wap.quizit.service.exception.EntityFieldValidationException;
+import com.wap.quizit.service.exception.EntityNotFoundException;
+import com.wap.quizit.service.exception.UserNotExistsException;
 import com.wap.quizit.util.Constants;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +23,11 @@ public class UserService {
   private UserRepository userRepository;
   private RoleRepository roleRepository;
 
-  public Optional<User> getById(Long id) {
+  public User getById(Long id) {
+    return userRepository.findById(id).orElseThrow(() -> new UserNotExistsException(id));
+  }
+
+  public Optional<User> getByIdNoException(Long id) {
     return userRepository.findById(id);
   }
 
@@ -28,26 +35,21 @@ public class UserService {
     return userRepository.findAll();
   }
 
-  public Optional<User> getByUsername(String username) {
+  public Optional<User> getByUsernameNoException(String username) {
     return userRepository.findByUsername(username);
   }
 
-  public Optional<User> getByEmail(String email) {
+  public User getByUsername(String username) {
+    return userRepository.findByUsername(username)
+        .orElseThrow(() -> new UserNotExistsException(username));
+  }
+
+  public Optional<User> getByEmailNoException(String email) {
     return userRepository.findByEmail(email);
   }
 
-  public User registerUser(RegisterUserDTO registerForm) {
-    User user = new User();
-    user.setId(Constants.DEFAULT_ID);
-    user.setReportsIssued(new HashSet<>());
-    user.setQuizzes(new HashSet<>());
-    user.setComments(new HashSet<>());
-    user.setRole(roleRepository.findById(Constants.ROLE_USER).orElseThrow(RoleNotFoundException::new));
-    user.setEmail(registerForm.getEmail());
-    user.setPassword(registerForm.getPassword());
-    user.setUsername(registerForm.getUsername());
-    userRepository.save(user);
-    return user;
+  public User getByEmail(String email) {
+    return userRepository.findByEmail(email).orElseThrow(() -> new UserNotExistsException(email));
   }
 
   public User save(User user) {

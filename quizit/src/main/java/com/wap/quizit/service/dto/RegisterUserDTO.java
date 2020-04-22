@@ -26,7 +26,4 @@ public class RegisterUserDTO {
   @NotBlank
   @Size(min = 3, max = 50)
   String password;
-
-  @NotNull
-  Long role;
 }

@@ -1,6 +1,5 @@
 package com.wap.quizit.service;
 
-import com.wap.quizit.model.Answer;
 import com.wap.quizit.model.Role;
 import com.wap.quizit.repository.RoleRepository;
 import com.wap.quizit.service.exception.EntityNotFoundException;
@@ -16,12 +15,20 @@ public class RoleService {
   
   private RoleRepository roleRepository;
 
-  public Optional<Role> getById(Long id) {
+  public Optional<Role> getByIdNoException(Long id) {
     return roleRepository.findById(id);
   }
 
-  public Optional<Role> getByName(String name) {
+  public Role getById(Long id) {
+    return roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Role.class, id));
+  }
+
+  public Optional<Role> getByNameNoException(String name) {
     return roleRepository.findByName(name);
+  }
+
+  public Role getByName(String name) {
+    return roleRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException(Role.class, name));
   }
 
   public List<Role> getAll() {

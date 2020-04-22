@@ -16,5 +16,7 @@ public class AnswerDTO {
 
   @NotNull Boolean isCorrect;
 
+  @NotNull Integer pointsCount;
+
   @NotNull Long question;
 }

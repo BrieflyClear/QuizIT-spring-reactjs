@@ -1,5 +1,6 @@
 package com.wap.quizit.web.rest;
 
+import com.wap.quizit.model.Role;
 import com.wap.quizit.model.User;
 import com.wap.quizit.service.UserService;
 import com.wap.quizit.service.dto.LoginUserDTO;
@@ -7,12 +8,15 @@ import com.wap.quizit.service.dto.RegisterUserDTO;
 import com.wap.quizit.service.dto.UserDTO;
 import com.wap.quizit.service.exception.*;
 import com.wap.quizit.service.mapper.UserMapper;
+import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,12 +30,7 @@ public class UserRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<UserDTO> get(@PathVariable Long id) {
-    var tmp = userService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(userMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(User.class, id);
-    }
+    return new ResponseEntity<>(userMapper.map(userService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -42,37 +41,35 @@ public class UserRestController {
 
   @PostMapping("/register")
   public ResponseEntity<UserDTO> register(@RequestBody RegisterUserDTO form) {
-    if(userService.getByUsername(form.getUsername()).isPresent()) {
+    if(userService.getByUsernameNoException(form.getUsername()).isPresent()) {
       throw new UsernameAlreadyUsedException(form.getUsername());
     }
-    if(userService.getByEmail(form.getEmail()).isPresent()) {
+    if(userService.getByEmailNoException(form.getEmail()).isPresent()) {
       throw new EmailAlreadyUsedException();
     }
-    var newUser = userService.registerUser(form);
+    var newUser = userService.save(userMapper.map(form));
+    DataValidator.validateUser(newUser);
     return new ResponseEntity<>(userMapper.map(newUser), HttpStatus.OK);
   }
 
   @GetMapping("/login")
   public ResponseEntity<UserDTO> login(@RequestBody LoginUserDTO loginForm) {
     var tmpUser = userService.getByEmail(loginForm.getEmail());
-    if(tmpUser.isEmpty()) {
-      throw new UserNotExistsException(loginForm.getEmail());
-    }
-    if(!tmpUser.get().getPassword().equals(loginForm.getPassword())) {
+    if(!tmpUser.getPassword().equals(loginForm.getPassword())) {
       throw new InvalidPasswordException();
     }
-    return new ResponseEntity<>(userMapper.map(tmpUser.get()), HttpStatus.OK);
+    return new ResponseEntity<>(userMapper.map(tmpUser), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<UserDTO> update(@RequestBody UserDTO dto) {
-    if(userService.getById(dto.getId()).isPresent()) {
-      var user = userMapper.map(dto);
-      var saved = userService.save(user);
-      return new ResponseEntity<>(userMapper.map(saved), HttpStatus.OK);
-    } else {
+    if(userService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new UserNotExistsException(dto.getId());
     }
+    var user = userMapper.map(dto);
+    DataValidator.validateUser(user);
+    var saved = userService.save(user);
+    return new ResponseEntity<>(userMapper.map(saved), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")

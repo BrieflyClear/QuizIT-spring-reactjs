@@ -1,11 +1,15 @@
 package com.wap.quizit.web.rest;
 
 import com.wap.quizit.model.Quiz;
+import com.wap.quizit.model.Report;
+import com.wap.quizit.model.User;
 import com.wap.quizit.service.QuizService;
 import com.wap.quizit.service.dto.QuizDTO;
+import com.wap.quizit.service.exception.EntityFieldValidationException;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.QuizMapper;
 import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +29,7 @@ public class QuizRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<QuizDTO> get(@PathVariable Long id) {
-    var tmp = quizService.getById(id);
-    if(tmp.isPresent()) {
-      return new ResponseEntity<>(quizMapper.map(tmp.get()), HttpStatus.OK);
-    } else {
-      throw new EntityNotFoundException(Quiz.class, id);
-    }
+    return new ResponseEntity<>(quizMapper.map(quizService.getById(id)), HttpStatus.OK);
   }
 
   @GetMapping
@@ -43,16 +42,18 @@ public class QuizRestController {
   public ResponseEntity<QuizDTO> create(@RequestBody QuizDTO dto) {
     Quiz quiz = quizMapper.map(dto);
     quiz.setId(Constants.DEFAULT_ID);
+    DataValidator.validateQuiz(quiz);
     var saved = quizService.save(quiz);
     return new ResponseEntity<>(quizMapper.map(saved), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<QuizDTO> update(@RequestBody QuizDTO dto) {
-    if(quizService.getById(dto.getId()).isEmpty()) {
+    if(quizService.getByIdNoException(dto.getId()).isEmpty()) {
       throw new EntityNotFoundException(Quiz.class, dto.getId());
     }
     Quiz quiz = quizMapper.map(dto);
+    DataValidator.validateQuiz(quiz);
     var saved = quizService.save(quiz);
     return new ResponseEntity<>(quizMapper.map(saved), HttpStatus.OK);
   }

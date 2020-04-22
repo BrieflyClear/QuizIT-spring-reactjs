@@ -22,7 +22,8 @@ public abstract class CategoryMapperDecorator implements CategoryMapper {
   @Override
   public Category map(CategoryDTO dto) {
     var category = delegate.map(dto);
-    Set<QuizCategory> quizzes = categoryService.getById(dto.getId()).map(Category::getQuizzes).orElse(new HashSet<>());
+    Set<QuizCategory> quizzes = categoryService.getByIdNoException(dto.getId()).map(Category::getQuizzes)
+        .orElse(new HashSet<>());
     category.setQuizzes(quizzes);
     return category;
   }

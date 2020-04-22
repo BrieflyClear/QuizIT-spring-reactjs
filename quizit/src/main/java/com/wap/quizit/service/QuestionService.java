@@ -2,6 +2,7 @@ package com.wap.quizit.service;
 
 import com.wap.quizit.model.Question;
 import com.wap.quizit.repository.QuestionRepository;
+import com.wap.quizit.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,11 @@ public class QuestionService {
   
   private QuestionRepository questionRepository;
 
-  public Optional<Question> getById(Long id) {
+  public Question getById(Long id) {
+    return questionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Question.class, id));
+  }
+
+  public Optional<Question> getByIdNoException(Long id) {
     return questionRepository.findById(id);
   }
 

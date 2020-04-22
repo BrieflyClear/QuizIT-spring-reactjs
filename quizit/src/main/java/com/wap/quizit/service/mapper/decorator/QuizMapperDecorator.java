@@ -32,31 +32,31 @@ public abstract class QuizMapperDecorator implements QuizMapper {
   @Autowired
   private ReportService reportService;
 
-  /**
-   * Should throw error instead of null
-   */
   @Override
   public Quiz map(QuizDTO dto) {
     var quiz = delegate.map(dto);
-    var savedQuiz = quizService.getById(dto.getId());
-    quiz.setAuthor(userService.getById(dto.getAuthor()).orElse(null));
+    var savedQuiz = quizService.getByIdNoException(dto.getId());
+    quiz.setAuthor(userService.getById(dto.getAuthor()));
     Set<QuizCategory> categories = new HashSet<>();
     dto.getCategories().forEach(id -> {
       boolean added = false;
       if(savedQuiz.isPresent()) {
-        added = quizCategoryService.getByQuizAndCategoryId(dto.getId(), id).map(categories::add).orElse(false);
+        added = quizCategoryService.getByQuizAndCategoryIdNoException(dto.getId(), id)
+            .map(categories::add)
+            .orElse(false);
       }
       if(!added) {
-        categoryService.getById(id).map(category -> categories.add(new QuizCategory(Constants.DEFAULT_ID, quiz, category)));
+        categories.add(new QuizCategory(Constants.DEFAULT_ID, quiz, categoryService.getById(id)));
       }
     });
     quiz.setCategories(categories);
     Set<Question> questions = new HashSet<>();
-    dto.getQuestions().forEach(id -> questionService.getById(id).map(questions::add));
+    dto.getQuestions().forEach(id -> questions.add(questionService.getById(id)));
     quiz.setQuestions(questions);
     Set<Report> reports = new HashSet<>();
-    dto.getReportsIssued().forEach(id -> reportService.getById(id).map(reports::add));
+    dto.getReportsIssued().forEach(id -> reports.add(reportService.getById(id)));
     quiz.setReportsIssued(reports);
+    quiz.setAttempts(savedQuiz.map(Quiz::getAttempts).orElse(new HashSet<>()));
     return quiz;
   }
 }

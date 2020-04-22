@@ -28,6 +28,7 @@ public interface QuizMapper {
   @Mapping(target = "categories", ignore = true)
   @Mapping(target = "questions", ignore = true)
   @Mapping(target = "reportsIssued", ignore = true)
+  @Mapping(target = "attempts", ignore = true)
   Quiz map(QuizDTO dto);
 
   default List<Long> convertCategories(Set<QuizCategory> list) {

@@ -2,6 +2,7 @@ package com.wap.quizit.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"users"})
 @Entity
 @Table(name = "roles")
 public class Role {
@@ -19,7 +21,7 @@ public class Role {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name", nullable = false, unique = true)
+  @Column(name = "name", nullable = false, unique = true, length = 20)
   private String name;
 
   @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)

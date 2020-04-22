@@ -1,7 +1,9 @@
 package com.wap.quizit.service;
 
 import com.wap.quizit.model.Category;
+import com.wap.quizit.model.Question;
 import com.wap.quizit.repository.CategoryRepository;
+import com.wap.quizit.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,11 @@ public class CategoryService {
   
   private CategoryRepository categoryRepository;
 
-  public Optional<Category> getById(Long id) {
+  public Category getById(Long id) {
+    return categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Category.class, id));
+  }
+
+  public Optional<Category> getByIdNoException(Long id) {
     return categoryRepository.findById(id);
   }
 
@@ -22,7 +28,11 @@ public class CategoryService {
     return categoryRepository.findAll();
   }
 
-  public Optional<Category> getByName(String name) {
+  public Category getByName(String name) {
+    return categoryRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException(Category.class, name));
+  }
+
+  public Optional<Category> getByNameNoException(String name) {
     return categoryRepository.findByName(name);
   }
 
