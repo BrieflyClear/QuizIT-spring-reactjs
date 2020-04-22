@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,7 @@ public class CommentRestController {
   public ResponseEntity<CommentDTO> create(@RequestBody CommentDTO dto) {
     Comment comment = commentMapper.map(dto);
     comment.setId(Constants.DEFAULT_ID);
+    comment.setIssuedTime(LocalDateTime.now());
     DataValidator.validateComment(comment);
     var saved = commentService.save(comment);
     return new ResponseEntity<>(commentMapper.map(saved), HttpStatus.OK);

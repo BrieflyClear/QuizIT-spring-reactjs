@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class ReportRestController {
   public ResponseEntity<ReportDTO> create(@RequestBody ReportDTO dto) {
     Report report = reportMapper.map(dto);
     report.setId(Constants.DEFAULT_ID);
+    report.setIssuedTime(LocalDateTime.now());
     DataValidator.validateReport(report);
     var saved = reportService.save(report);
     return new ResponseEntity<>(reportMapper.map(saved), HttpStatus.OK);
