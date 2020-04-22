@@ -1,8 +1,6 @@
 package com.wap.quizit.util;
 
-import com.wap.quizit.model.Answer;
-import com.wap.quizit.model.Question;
-import com.wap.quizit.model.User;
+import com.wap.quizit.model.*;
 import com.wap.quizit.service.exception.EntityFieldValidationException;
 
 import java.util.regex.Pattern;
@@ -46,6 +44,49 @@ public class DataValidator {
     } else if(!Pattern.matches(Constants.EMAIL_REGEX, email)) {
       throw new EntityFieldValidationException(
           User.class.getSimpleName(), "email", email, "Wrong email characters!");
+    }
+  }
+
+  public static void validateRole(Role role) {
+    if(!Pattern.matches(Constants.ROLE_REGEX, role.getName())) {
+      throw new EntityFieldValidationException(
+          Role.class.getSimpleName(), "name", role.getName(), "Wrong name characters! " +
+          "Length must be in range 3-15. Only alphanumeric, '_', '-' and spaces characters are allowed.");
+    }
+  }
+
+  public static void validateReport(Report report) {
+    if(!Pattern.matches(Constants.REPORT_TITLE_REGEX, report.getTitle())) {
+      throw new EntityFieldValidationException(
+          Report.class.getSimpleName(), "title", report.getTitle(), "Wrong title characters! " +
+          "Length must be in range 3-50. Only alphanumeric, '_', '-' and spaces characters are allowed.");
+    }
+    if(!Pattern.matches(Constants.REPORT_DESCRIPTION_REGEX, report.getDescription())) {
+      throw new EntityFieldValidationException(
+          Report.class.getSimpleName(), "description", report.getDescription(), "Wrong description characters! " +
+          "Length must be in range 3-200. Only alphanumeric, '_', '-' and spaces characters are allowed.");
+    }
+    if(!Pattern.matches(Constants.REPORT_STATUS_REGEX, report.getStatus())) {
+      throw new EntityFieldValidationException(
+          Report.class.getSimpleName(), "status", report.getStatus(), "Wrong status characters! " +
+          "Length must be in range 3-20. Only alphanumeric, '_', '-' and spaces characters are allowed.");
+    }
+  }
+
+  public static void validateCategory(Category category) {
+    if(!Pattern.matches(Constants.CATEGORY_REGEX, category.getName())) {
+      throw new EntityFieldValidationException(Category.class.getSimpleName(), "name", category.getName(),
+          "Wrong characters! " +
+              "Length must be in range 3-40. Only alphanumeric, '_', '-' and spaces characters are allowed.");
+    }
+  }
+
+  public static void validateComment(Comment comment) {
+    if(!Pattern.matches(Constants.COMMENT_REGEX, comment.getContents())) {
+      throw new EntityFieldValidationException(
+          Comment.class.getSimpleName(), "contents", comment.getContents(),
+          "Wrong characters! " +
+              "Length must be in range 3-200. Only alphanumeric, '_', '-' and spaces characters are allowed.");
     }
   }
 

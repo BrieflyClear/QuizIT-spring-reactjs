@@ -7,6 +7,7 @@ import com.wap.quizit.service.exception.EntityFieldValidationException;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.RoleMapper;
 import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,10 +40,11 @@ public class RoleRestController {
   @PostMapping
   public ResponseEntity<RoleDTO> create(@RequestBody RoleDTO dto) {
     if(roleService.getByNameNoException(dto.getName()).isPresent()) {
-      throw new EntityFieldValidationException(Role.class.getSimpleName(), "name", dto.getName(), "Value already in use!");
+      throw new EntityFieldValidationException(Role.class.getSimpleName(),
+          "name", dto.getName(), "Value already in use!");
     }
     Role role = new Role(Constants.DEFAULT_ID, dto.getName(), new HashSet<>());
-    checkConditions(role, dto);
+    DataValidator.validateRole(role);
     var saved = roleService.save(role);
     return new ResponseEntity<>(roleMapper.map(saved), HttpStatus.OK);
   }
@@ -53,7 +55,7 @@ public class RoleRestController {
       throw new EntityNotFoundException(Role.class, dto.getId());
     }
     Role role = roleMapper.map(dto);
-    checkConditions(role, dto);
+    DataValidator.validateRole(role);
     var saved = roleService.save(role);
     return new ResponseEntity<>(roleMapper.map(saved), HttpStatus.OK);
   }
@@ -62,12 +64,5 @@ public class RoleRestController {
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
     roleService.deleteById(id);
     return ResponseEntity.noContent().build();
-  }
-
-  protected void checkConditions(Role role, RoleDTO dto) {
-    if(role.getName().length() > 20) {
-      throw new EntityFieldValidationException(
-          Role.class.getSimpleName(), "name", dto.getName(), "Name is too long! Maximum 20 characters.");
-    }
   }
 }

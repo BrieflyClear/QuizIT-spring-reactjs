@@ -7,6 +7,7 @@ import com.wap.quizit.service.exception.EntityFieldValidationException;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.CategoryMapper;
 import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class CategoryRestController {
     }
     Category category = categoryMapper.map(dto);
     category.setId(Constants.DEFAULT_ID);
-    checkConditions(category, dto);
+    DataValidator.validateCategory(category);
     var saved = categoryService.save(category);
     return new ResponseEntity<>(categoryMapper.map(saved), HttpStatus.OK);
   }
@@ -54,7 +55,7 @@ public class CategoryRestController {
       throw new EntityNotFoundException(Category.class, dto.getId());
     }
     Category category = categoryMapper.map(dto);
-    checkConditions(category, dto);
+    DataValidator.validateCategory(category);
     var saved = categoryService.save(category);
     return new ResponseEntity<>(categoryMapper.map(saved), HttpStatus.OK);
   }
@@ -63,12 +64,5 @@ public class CategoryRestController {
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
     categoryService.deleteById(id);
     return ResponseEntity.noContent().build();
-  }
-
-  protected void checkConditions(Category category, CategoryDTO dto) {
-    if(category.getName().length() > 40) {
-      throw new EntityFieldValidationException(Category.class.getSimpleName(), "name", dto.getName(),
-          "Name too long! Maximum 40 characters.");
-    }
   }
 }
