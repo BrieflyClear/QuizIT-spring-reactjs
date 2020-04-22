@@ -35,10 +35,10 @@ public abstract class UserQuizAttemptMapperDecorator implements UserQuizAttemptM
   @Override
   public UserQuizAttempt map(UserQuizAttemptDTO dto) {
     var userAttempt = delegate.map(dto);
-    userAttempt.setQuiz(quizService.getById(dto.getQuiz()).orElse(null));
-    userAttempt.setUser(userService.getById(dto.getUser()).orElse(null));
+    userAttempt.setQuiz(quizService.getById(dto.getQuiz()));
+    userAttempt.setUser(userService.getById(dto.getUser()));
     Set<UserQuizAttemptAnswer> answers = new HashSet<>();
-    dto.getAttemptAnswers().forEach(id -> userAnswerService.getByUserQuizAttemptAnswerId(id).ifPresent(answers::add));
+    dto.getAttemptAnswers().forEach(id -> answers.add(userAnswerService.getQuizAttemptAnswerById(id)));
     userAttempt.setAttemptAnswers(answers);
     return userAttempt;
   }
@@ -46,9 +46,9 @@ public abstract class UserQuizAttemptMapperDecorator implements UserQuizAttemptM
   @Override
   public UserQuizAttemptAnswer map(UserQuizAttemptAnswerDTO dto) {
     var userAnswer = delegate.map(dto);
-    userAnswer.setAnswerGiven(answerService.getById(dto.getAnswerGiven()).orElse(null));
-    userAnswer.setQuestion(questionService.getById(dto.getQuestion()).orElse(null));
-    userAnswer.setAttempt(userAnswerService.getById(dto.getAttempt()).orElse(null));
+    userAnswer.setAnswerGiven(answerService.getById(dto.getAnswerGiven()));
+    userAnswer.setQuestion(questionService.getById(dto.getQuestion()));
+    userAnswer.setAttempt(userAnswerService.getById(dto.getAttempt()));
     return userAnswer;
   }
 

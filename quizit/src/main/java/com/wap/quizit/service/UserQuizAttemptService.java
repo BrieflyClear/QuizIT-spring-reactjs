@@ -4,6 +4,7 @@ import com.wap.quizit.model.UserQuizAttempt;
 import com.wap.quizit.model.UserQuizAttemptAnswer;
 import com.wap.quizit.repository.UserQuizAttemptAnswerRepository;
 import com.wap.quizit.repository.UserQuizAttemptRepository;
+import com.wap.quizit.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,12 @@ public class UserQuizAttemptService {
   private UserQuizAttemptRepository solvedQuizzesRepository;
   private UserQuizAttemptAnswerRepository answerRepository;
 
-  public Optional<UserQuizAttempt> getById(Long id) {
+  public UserQuizAttempt getById(Long id) {
+    return solvedQuizzesRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(UserQuizAttempt.class, id));
+  }
+
+  public Optional<UserQuizAttempt> getByIdNoError(Long id) {
     return solvedQuizzesRepository.findById(id);
   }
 
@@ -41,7 +47,12 @@ public class UserQuizAttemptService {
     return solvedQuizzesRepository.findByUserIdAndQuizId(user, quiz);
   }
 
-  public Optional<UserQuizAttemptAnswer> getByUserQuizAttemptAnswerId(Long quizAttemptAnswer) {
+  public UserQuizAttemptAnswer getQuizAttemptAnswerById(Long quizAttemptAnswer) {
+    return answerRepository.findById(quizAttemptAnswer)
+        .orElseThrow(() -> new EntityNotFoundException(UserQuizAttemptAnswer.class, quizAttemptAnswer));
+  }
+
+  public Optional<UserQuizAttemptAnswer> getQuizAttemptAnswerByIdNoError(Long quizAttemptAnswer) {
     return answerRepository.findById(quizAttemptAnswer);
   }
 

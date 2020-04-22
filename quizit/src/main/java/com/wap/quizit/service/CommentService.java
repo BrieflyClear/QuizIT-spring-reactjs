@@ -2,6 +2,7 @@ package com.wap.quizit.service;
 
 import com.wap.quizit.model.Comment;
 import com.wap.quizit.repository.CommentRepository;
+import com.wap.quizit.service.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,11 @@ public class CommentService {
   
   private CommentRepository commentRepository;
 
-  public Optional<Comment> getById(Long id) {
+  public Comment getById(Long id) {
+    return commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Comment.class, id));
+  }
+
+  public Optional<Comment> getByIdNoException(Long id) {
     return commentRepository.findById(id);
   }
 
