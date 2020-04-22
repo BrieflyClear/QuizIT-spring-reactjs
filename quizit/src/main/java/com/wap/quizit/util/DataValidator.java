@@ -90,7 +90,39 @@ public class DataValidator {
     }
   }
 
+  public static void validateQuiz(Quiz quiz) {
+    if(!Pattern.matches(Constants.QUIZ_REGEX, quiz.getTitle())) {
+      throw new EntityFieldValidationException(
+          Quiz.class.getSimpleName(), "title", quiz.getTitle(), "Wrong characters! " +
+          "Length must be in range 3-50. Only alphanumeric, '_', '-' and spaces characters are allowed.");
+    }
+  }
+
+  // TODO listed below
+  public static void validateQuestion(Question question) {
+
+    return;
+    /*
+    if(!question.getAnswers().isEmpty()) {
+      final String answers = "answers";
+      if(question.getAnswers().stream().noneMatch(Answer::isCorrect)) {
+        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "At least one answer must be correct!");
+      }
+      if(question.isClosed() && !question.isMultipleChoice() && question.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {
+        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a multiple-choice question cannot have multiple correct answers!");
+      }
+      if(!question.isClosed() && !question.isMultipleChoice() && question.getAnswers().size() > 1) {
+        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a closed question must have only one answer!");
+      } else if(!question.isClosed() && !question.isMultipleChoice() && question.getAnswers().size() == 1 && question.getAnswers().stream().noneMatch(Answer::isCorrect)) {
+        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a closed question must have only one answer that is correct!");
+      }
+    }*/
+  }
+
   public static void validateAnswer(Answer answer) {
+
+    return;
+/*
     if(answer.getPointsCount() > Constants.ANSWER_MAX_POINT_COUNT || answer.getPointsCount() < Constants.ANSWER_MIN_POINT_COUNT) {
       throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount", answer.getPointsCount(), "Points must be in range (" + Constants.ANSWER_MIN_POINT_COUNT + ", " + Constants.ANSWER_MAX_POINT_COUNT + ")!");
     } else {
@@ -110,6 +142,14 @@ public class DataValidator {
           throw new EntityFieldValidationException(Answer.class.getSimpleName(), "pointsCount", answer.getPointsCount(), "Not correct answer must give 0 or less points!");
         }
       }
-    }
+    }*/
+  }
+
+  public static void validateUserQuizAttempt(UserQuizAttempt attempt) {
+
+  }
+
+  public static void validateUserQuizAttemptAnswer(UserQuizAttemptAnswer attemptAnswer) {
+
   }
 }

@@ -9,6 +9,7 @@ import com.wap.quizit.service.exception.EntityFieldValidationException;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.QuizMapper;
 import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class QuizRestController {
   public ResponseEntity<QuizDTO> create(@RequestBody QuizDTO dto) {
     Quiz quiz = quizMapper.map(dto);
     quiz.setId(Constants.DEFAULT_ID);
-    checkConditions(quiz, dto);
+    DataValidator.validateQuiz(quiz);
     var saved = quizService.save(quiz);
     return new ResponseEntity<>(quizMapper.map(saved), HttpStatus.OK);
   }
@@ -52,7 +53,7 @@ public class QuizRestController {
       throw new EntityNotFoundException(Quiz.class, dto.getId());
     }
     Quiz quiz = quizMapper.map(dto);
-    checkConditions(quiz, dto);
+    DataValidator.validateQuiz(quiz);
     var saved = quizService.save(quiz);
     return new ResponseEntity<>(quizMapper.map(saved), HttpStatus.OK);
   }
@@ -61,15 +62,5 @@ public class QuizRestController {
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
     quizService.deleteById(id);
     return ResponseEntity.noContent().build();
-  }
-
-  protected void checkConditions(Quiz quiz, QuizDTO dto) {
-    if(quiz.getAuthor() == null) {
-      throw new EntityNotFoundException(User.class, dto.getAuthor());
-    }
-    if(quiz.getTitle().length() > 50) {
-      throw new EntityFieldValidationException(
-          Quiz.class.getSimpleName(), "title", dto.getTitle(), "Title is too long! Maximum 50 characters.");
-    }
   }
 }

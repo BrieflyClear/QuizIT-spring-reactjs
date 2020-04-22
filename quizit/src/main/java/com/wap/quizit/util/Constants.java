@@ -18,6 +18,7 @@ public class Constants {
   public static final String REPORT_STATUS_REGEX = "^[a-zA-Z0-9 _-]{3,20}$";
   public static final String CATEGORY_REGEX = "^[a-zA-Z0-9 _-]{3,40}$";
   public static final String COMMENT_REGEX = "^[a-zA-Z0-9 _-]{1,200}$";
+  public static final String QUIZ_REGEX = "^[a-zA-Z0-9 _-]{3,50}$";
 
   public static final String ADMIN = "ROLE_ADMIN";
   public static final String USER = "ROLE_USER";

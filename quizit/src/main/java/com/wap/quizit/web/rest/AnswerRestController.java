@@ -6,6 +6,7 @@ import com.wap.quizit.service.dto.AnswerDTO;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.AnswerMapper;
 import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class AnswerRestController {
   public ResponseEntity<AnswerDTO> create(@RequestBody AnswerDTO dto) {
     Answer answer = answerMapper.map(dto);
     answer.setId(Constants.DEFAULT_ID);
-    //checkConditions(answer, dto);
+    DataValidator.validateAnswer(answer);
     var saved = answerService.save(answer);
     return new ResponseEntity<>(answerMapper.map(saved), HttpStatus.OK);
   }
@@ -49,7 +50,7 @@ public class AnswerRestController {
       throw new EntityNotFoundException(Answer.class, dto.getId());
     }
     Answer answer = answerMapper.map(dto);
-    //checkConditions(answer, dto);
+    DataValidator.validateAnswer(answer);
     var saved = answerService.save(answer);
     return new ResponseEntity<>(answerMapper.map(saved), HttpStatus.OK);
   }

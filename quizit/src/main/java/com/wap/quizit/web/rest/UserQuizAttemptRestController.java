@@ -9,6 +9,7 @@ import com.wap.quizit.service.dto.UserQuizSummary;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.UserQuizAttemptMapper;
 import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/quizzes_attempts")
 @AllArgsConstructor
 public class UserQuizAttemptRestController {
+
+  // TODO add creating Quiz Attempt from the Summary DTO
 
   private UserQuizAttemptService userQuizAttemptService;
   private UserQuizAttemptMapper userQuizAttemptMapper;
@@ -93,7 +96,7 @@ public class UserQuizAttemptRestController {
     UserQuizAttempt userQuizAttempt = userQuizAttemptMapper.map(dto);
     userQuizAttempt.setId(Constants.DEFAULT_ID);
     userQuizAttempt.setAttemptTime(LocalDateTime.now());
-    //checkConditions(userQuizAttempt, dto);
+    DataValidator.validateUserQuizAttempt(userQuizAttempt);
     var saved = userQuizAttemptService.save(userQuizAttempt);
     return new ResponseEntity<>(userQuizAttemptMapper.map(saved), HttpStatus.OK);
   }
@@ -102,7 +105,7 @@ public class UserQuizAttemptRestController {
   public ResponseEntity<UserQuizAttemptAnswerDTO> createQuestionAnswer(@RequestBody UserQuizAttemptAnswerDTO dto) {
     UserQuizAttemptAnswer userQuizAttempt = userQuizAttemptMapper.map(dto);
     userQuizAttempt.setId(Constants.DEFAULT_ID);
-    //checkConditions(userQuizAttempt, dto);
+    DataValidator.validateUserQuizAttemptAnswer(userQuizAttempt);
     var saved = userQuizAttemptService.saveAnswer(userQuizAttempt);
     return new ResponseEntity<>(userQuizAttemptMapper.map(saved), HttpStatus.OK);
   }
@@ -113,7 +116,7 @@ public class UserQuizAttemptRestController {
       throw new EntityNotFoundException(UserQuizAttempt.class, dto.getId());
     }
     UserQuizAttempt userQuizAttempt = userQuizAttemptMapper.map(dto);
-    //checkConditions(userQuizAttempt, dto);
+    DataValidator.validateUserQuizAttempt(userQuizAttempt);
     var saved = userQuizAttemptService.save(userQuizAttempt);
     return new ResponseEntity<>(userQuizAttemptMapper.map(saved), HttpStatus.OK);
   }
@@ -124,7 +127,7 @@ public class UserQuizAttemptRestController {
       throw new EntityNotFoundException(UserQuizAttemptAnswer.class, dto.getId());
     }
     UserQuizAttemptAnswer userQuizAttempt = userQuizAttemptMapper.map(dto);
-    //checkConditions(userQuizAttempt, dto);
+    DataValidator.validateUserQuizAttemptAnswer(userQuizAttempt);
     var saved = userQuizAttemptService.saveAnswer(userQuizAttempt);
     return new ResponseEntity<>(userQuizAttemptMapper.map(saved), HttpStatus.OK);
   }
@@ -140,14 +143,4 @@ public class UserQuizAttemptRestController {
     userQuizAttemptService.deleteAnswerById(id);
     return ResponseEntity.noContent().build();
   }
-
-  // TODO + add creating from the summary form
-  /*protected void checkConditions(UserQuizAttempt userQuizAttempt, UserQuizAttemptAnswerDTO dto) {
-    if(userQuizAttempt.getQuestion() == null) {
-      throw new EntityNotFoundException(Question.class, dto.getQuestion());
-    }
-    if(userQuizAttempt.getUser() == null) {
-      throw new EntityNotFoundException(User.class, dto.getUser());
-    }
-  }*/
 }

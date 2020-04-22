@@ -9,6 +9,7 @@ import com.wap.quizit.service.exception.EntityFieldValidationException;
 import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.mapper.QuestionMapper;
 import com.wap.quizit.util.Constants;
+import com.wap.quizit.util.DataValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class QuestionRestController {
   public ResponseEntity<QuestionDTO> create(@RequestBody QuestionDTO dto) {
     Question question = questionMapper.map(dto);
     question.setId(Constants.DEFAULT_ID);
-    checkConditions(question, dto);
+    DataValidator.validateQuestion(question);
     var saved = questionService.save(question);
     return new ResponseEntity<>(questionMapper.map(saved), HttpStatus.OK);
   }
@@ -52,7 +53,7 @@ public class QuestionRestController {
       throw new EntityNotFoundException(Question.class, dto.getId());
     }
     Question question = questionMapper.map(dto);
-    checkConditions(question, dto);
+    DataValidator.validateQuestion(question);
     var saved = questionService.save(question);
     return new ResponseEntity<>(questionMapper.map(saved), HttpStatus.OK);
   }
@@ -61,29 +62,5 @@ public class QuestionRestController {
   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
     questionService.deleteById(id);
     return ResponseEntity.noContent().build();
-  }
-
-  protected void checkConditions(Question question, QuestionDTO dto) {
-    if(question.getQuiz() == null) {
-      throw new EntityNotFoundException(Quiz.class, dto.getQuiz());
-    }
-    checkQuestionAnswers(question);
-  }
-
-  public static void checkQuestionAnswers(Question question) {
-    if(!question.getAnswers().isEmpty()) {
-      final String answers = "answers";
-      if(question.getAnswers().stream().noneMatch(Answer::isCorrect)) {
-        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "At least one answer must be correct!");
-      }
-      if(question.isClosed() && !question.isMultipleChoice() && question.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {
-        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a multiple-choice question cannot have multiple correct answers!");
-      }
-      if(!question.isClosed() && !question.isMultipleChoice() && question.getAnswers().size() > 1) {
-        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a closed question must have only one answer!");
-      } else if(!question.isClosed() && !question.isMultipleChoice() && question.getAnswers().size() == 1 && question.getAnswers().stream().noneMatch(Answer::isCorrect)) {
-        throw new EntityFieldValidationException(Question.class.getSimpleName(), answers, "---", "Question that is not a closed question must have only one answer that is correct!");
-      }
-    }
   }
 }
