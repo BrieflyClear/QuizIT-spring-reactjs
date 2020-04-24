@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -50,6 +51,13 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     error.setMessage("path " + request.getContextPath());
     ApiValidationError apiError = new ApiValidationError(ex.getObject(), ex.getField(), ex.getRejectedValue(), ex.getMessage());
     error.setSubErrors(List.of(apiError));
+    return buildResponseEntity(error);
+  }
+
+  @ExceptionHandler(IOException.class)
+  protected ResponseEntity<Object> handleIOException(IOException ex, WebRequest request) {
+    Error error = new Error(BAD_REQUEST);
+    error.setMessage("Could not parse Json file! Internal message: " + ex.getMessage());
     return buildResponseEntity(error);
   }
 

@@ -4,11 +4,13 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
-public class CreateAnswerDTO {
+public class QuizQuestionFileDTO {
 
   @NotNull @NotBlank String contents;
-  @NotNull Boolean isCorrect;
-  @NotNull Integer pointsCount;
+  @NotNull Boolean isMultipleChoice;
+  @NotNull Boolean isClosed;
+  @NotNull List<CreateAnswerDTO> answers;
 }
