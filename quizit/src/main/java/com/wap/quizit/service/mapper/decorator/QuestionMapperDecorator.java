@@ -9,6 +9,7 @@ import com.wap.quizit.service.QuestionService;
 import com.wap.quizit.service.QuizService;
 import com.wap.quizit.service.dto.CreateQuestionDTO;
 import com.wap.quizit.service.dto.QuestionDTO;
+import com.wap.quizit.service.dto.QuizQuestionFileDTO;
 import com.wap.quizit.service.mapper.AnswerMapper;
 import com.wap.quizit.service.mapper.QuestionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class QuestionMapperDecorator implements QuestionMapper {
 
@@ -60,6 +62,25 @@ public abstract class QuestionMapperDecorator implements QuestionMapper {
     question.setAnswers(answers);
     question.setComments(new HashSet<>());
     question.setUserQuizAttemptsAnswers(new HashSet<>());
+    return question;
+  }
+
+  @Override
+  public Question mapFromFileFormat(QuizQuestionFileDTO dto) {
+    var question = delegate.mapFromFileFormat(dto);
+    Set<Answer> answers = new HashSet<>();
+    dto.getAnswers().forEach(answer -> answers.add(answerMapper.map(answer)));
+    answers.forEach(it -> it.setQuestion(question));
+    question.setAnswers(answers);
+    question.setComments(new HashSet<>());
+    question.setUserQuizAttemptsAnswers(new HashSet<>());
+    return question;
+  }
+
+  @Override
+  public QuizQuestionFileDTO mapToFileFormat(Question entity) {
+    var question = delegate.mapToFileFormat(entity);
+    question.setAnswers(entity.getAnswers().stream().map(answerMapper::mapToFileFormat).collect(Collectors.toList()));
     return question;
   }
 }

@@ -1,18 +1,11 @@
 package com.wap.quizit.service;
 
-import com.wap.quizit.model.Role;
 import com.wap.quizit.model.User;
-import com.wap.quizit.repository.RoleRepository;
 import com.wap.quizit.repository.UserRepository;
-import com.wap.quizit.service.dto.RegisterUserDTO;
-import com.wap.quizit.service.exception.EntityFieldValidationException;
-import com.wap.quizit.service.exception.EntityNotFoundException;
 import com.wap.quizit.service.exception.UserNotExistsException;
-import com.wap.quizit.util.Constants;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +14,6 @@ import java.util.Optional;
 public class UserService {
 
   private UserRepository userRepository;
-  private RoleRepository roleRepository;
 
   public User getById(Long id) {
     return userRepository.findById(id).orElseThrow(() -> new UserNotExistsException(id));

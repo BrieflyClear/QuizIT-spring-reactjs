@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"quiz", "category"})
 @Entity
 @Table(name = "quizzes_categories")
 public class QuizCategory {
