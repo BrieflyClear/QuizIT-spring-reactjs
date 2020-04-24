@@ -1,6 +1,13 @@
 package com.wap.quizit.util;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Constants {
 
@@ -8,8 +15,8 @@ public class Constants {
   public static final String USER = "User";
   public static final String ANONYMOUS = "Anonymous";
 
-  public static final Long ROLE_USER_ID = 2L;
   public static final Long ROLE_ADMIN_ID = 1L;
+  public static final Long ROLE_USER_ID = 2L;
 
   public static final Long DEFAULT_ID = 0L;
 
@@ -33,12 +40,26 @@ public class Constants {
   public static final Integer OPEN_QUESTION_ANSWER_POINTS = 0;
 
   public static String getApplicationName() {
-    return applicationName;
+    try {
+      MavenXpp3Reader reader = new MavenXpp3Reader();
+      Model model = reader.read(new FileReader("pom.xml"));
+      return model.getName();
+    } catch(XmlPullParserException | IOException e) {
+      e.printStackTrace();
+    }
+    return "";
   }
 
-
-  @Value("${com.wap.quizit}")
-  private static String applicationName;
+  public static String getApplicationVersion() {
+    try {
+      MavenXpp3Reader reader = new MavenXpp3Reader();
+      Model model = reader.read(new FileReader("pom.xml"));
+      return model.getVersion();
+    } catch(XmlPullParserException | IOException e) {
+      e.printStackTrace();
+    }
+    return "";
+  }
 
   private Constants(){}
 }
