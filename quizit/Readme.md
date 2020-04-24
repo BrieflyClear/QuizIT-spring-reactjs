@@ -1,6 +1,6 @@
 # QuizIT
 
-***current version: 0.2.0***
+***current version: 0.6.0***
 
 It is a server side application (REST API) that lets the users create, solve and share quizzes on any topic - it only depends on the user.
 
@@ -23,8 +23,6 @@ It is a server side application (REST API) that lets the users create, solve and
 * [Java 13]()
   * [Spring Boot]()
   * [Spring Data JPA]()
-  * [Lombok]()
-  * [MapStruct]()
 * [Oracle Database 12c]()
 
 ## Author
