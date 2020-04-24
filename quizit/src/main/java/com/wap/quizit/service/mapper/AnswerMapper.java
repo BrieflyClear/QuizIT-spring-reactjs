@@ -29,4 +29,8 @@ public interface AnswerMapper {
   @Mapping(target = "pointsCount", source = "dto.pointsCount")
   @Mapping(target = "userQuizAttemptAnswers", ignore = true)
   Answer map(CreateAnswerDTO dto);
+
+  @Mapping(target = "isCorrect", source = "correct")
+  @Mapping(target = "pointsCount", source = "entity.pointsCount")
+  CreateAnswerDTO mapToFileFormat(Answer entity);
 }
