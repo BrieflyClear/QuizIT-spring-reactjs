@@ -13,7 +13,7 @@ It is a server side application (REST API) that lets the users create, solve and
 * Create quizzes by uploading a proper file
 
 ## Getting Started
- * The API: ---
+ * The API: https://quizit-europe.herokuapp.com
 
 ### How to use the API
 
