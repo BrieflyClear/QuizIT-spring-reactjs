@@ -5,7 +5,7 @@
 It is a server side application (REST API) that lets the users create, solve and share quizzes on any topic - it only depends on the user.
 
 ## Features
-* REST API
+* RESTful API
 * Browse the database of quizzes
 * Create your account and your own quizzes
 * Share the quizzes with others
