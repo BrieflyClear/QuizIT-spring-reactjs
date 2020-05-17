@@ -39,6 +39,12 @@ public class CommentRestController {
     return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
+  @GetMapping("/question/{questionId}")
+  public ResponseEntity<List<CommentDTO>> getByQuestion(@PathVariable Long questionId) {
+    List<CommentDTO> list = commentService.getByQuestionId(questionId).stream().map(commentMapper::map).collect(Collectors.toList());
+    return new ResponseEntity<>(list, HttpStatus.OK);
+  }
+
   @PostMapping
   public ResponseEntity<CommentDTO> create(@RequestBody CommentDTO dto) {
     Comment comment = commentMapper.map(dto);
