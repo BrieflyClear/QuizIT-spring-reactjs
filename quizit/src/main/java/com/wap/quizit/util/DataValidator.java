@@ -128,7 +128,7 @@ public class DataValidator {
          }
         /** multiple choice questions don't have any special requirements */
         if(!question.isMultipleChoice()) {
-          if(question.getAnswers().stream().map(Answer::isCorrect).count() > 1) {
+          if(question.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {
             throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers", "---",
                 "Non multiple-choice question cannot have multiple correct answers!");
           }
@@ -165,7 +165,7 @@ public class DataValidator {
   public static void validateAnswer(Answer answer) {
     if(!Pattern.matches(Constants.ANSWER_REGEX, answer.getContents())) {
       throw new EntityFieldValidationException(
-          Answer.class.getSimpleName(), "contents", answer.getContents(), "Question is too short or too long! " +
+          Answer.class.getSimpleName(), "contents", answer.getContents(), "Answer is too short or too long! " +
           "Length must be in range 3-4000 characters.");
     }
     validateAnswerPoints(answer);

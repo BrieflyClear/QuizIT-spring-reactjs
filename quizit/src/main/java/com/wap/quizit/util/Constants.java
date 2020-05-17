@@ -30,8 +30,8 @@ public class Constants {
   public static final String CATEGORY_REGEX = "^[a-zA-Z0-9 _-]{3,40}$";
   public static final String COMMENT_REGEX = "^[a-zA-Z0-9 _-]{1,200}$";
   public static final String QUIZ_REGEX = "^[a-zA-Z0-9 _-]{3,50}$";
-  public static final String QUESTION_REGEX = "^[.]{3,1000}$";
-  public static final String ANSWER_REGEX = "^[.]{3,4000}$";
+  public static final String QUESTION_REGEX = "^.{3,1000}$";
+  public static final String ANSWER_REGEX = "^.{1,4000}$";
 
   public static final Integer ANSWER_MAX_POINT_COUNT = 50;
   public static final Integer ANSWER_MIN_POINT_COUNT = -50;
