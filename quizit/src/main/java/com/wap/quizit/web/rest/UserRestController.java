@@ -53,7 +53,7 @@ public class UserRestController {
     return new ResponseEntity<>(userMapper.map(newUser), HttpStatus.OK);
   }
 
-  @GetMapping("/login")
+  @PostMapping("/login")
   public ResponseEntity<UserDTO> login(@RequestBody LoginUserDTO loginForm) {
     var tmpUser = userService.getByEmail(loginForm.getEmail());
     if(!tmpUser.getPassword().equals(loginForm.getPassword())) {
