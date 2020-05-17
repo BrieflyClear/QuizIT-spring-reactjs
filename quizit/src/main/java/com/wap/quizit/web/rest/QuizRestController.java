@@ -40,6 +40,18 @@ public class QuizRestController {
     return new ResponseEntity<>(quizMapper.map(quizService.getById(id)), HttpStatus.OK);
   }
 
+  @GetMapping("/title/{titleFragment}")
+  public ResponseEntity<List<QuizDTO>> getByTitle(@PathVariable String titleFragment) {
+    List<QuizDTO> list = quizService.getByTitleFragment(titleFragment).stream().map(quizMapper::map).collect(Collectors.toList());
+    return new ResponseEntity<>(list, HttpStatus.OK);
+  }
+
+  @GetMapping("/category/{categoryId}")
+  public ResponseEntity<List<QuizDTO>> getByCategoryId(@PathVariable Long categoryId) {
+    List<QuizDTO> list = quizService.getByCategoryId(categoryId).stream().map(quizMapper::map).collect(Collectors.toList());
+    return new ResponseEntity<>(list, HttpStatus.OK);
+  }
+
   @GetMapping
   public ResponseEntity<List<QuizDTO>> getAll() {
     List<QuizDTO> list = quizService.getAll().stream().map(quizMapper::map).collect(Collectors.toList());
