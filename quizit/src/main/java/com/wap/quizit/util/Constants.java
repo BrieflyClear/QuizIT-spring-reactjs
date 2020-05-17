@@ -3,9 +3,7 @@ package com.wap.quizit.util;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.springframework.beans.factory.annotation.Value;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -21,7 +19,7 @@ public class Constants {
   public static final Long DEFAULT_ID = 0L;
 
   public static final String USERNAME_REGEX = "^[a-zA-Z0-9_-]{4,15}$";
-  public static final String EMAIL_REGEX = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$";
+  public static final String EMAIL_REGEX = "^(([^\\<\\>\\(\\)\\[\\]\\.,;:\\s@\"]+(.[^\\<\\>\\(\\)\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@(([^\\<\\>\\(\\)\\[\\]\\.,;:\\s@\"]+.)+[^\\<\\>\\(\\)\\[\\]\\.,;:\\s@\"]{2,})$";
   public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,15}$";
   public static final Integer MIN_EMAIL_LENGTH = 5;
   public static final Integer MAX_EMAIL_LENGTH = 50;
