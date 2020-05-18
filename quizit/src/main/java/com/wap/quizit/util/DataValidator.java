@@ -206,9 +206,13 @@ public class DataValidator {
     if(!attemptAnswer.getAttempt().getQuiz().getId().equals(attemptAnswer.getQuestion().getQuiz().getId())) {
       throw new AttemptAnswerNotMatchingQuiz(attemptAnswer.getId(), attemptAnswer.getAttempt().getId());
     }
-    if(attemptAnswer.getQuestion().getAnswers()
-        .stream().noneMatch(it -> it.getId().equals(attemptAnswer.getAnswerGiven().getId()))) {
-      throw new AttemptAnswerNotMatchingQuestion(attemptAnswer.getId(), attemptAnswer.getQuestion().getId());
+    if(attemptAnswer.getAnswerGiven() != null) {
+      if(attemptAnswer.getQuestion().getAnswers()
+          .stream().noneMatch(it -> it.getId().equals(attemptAnswer.getAnswerGiven().getId()))) {
+        throw new AttemptAnswerNotMatchingQuestion(attemptAnswer.getId(), attemptAnswer.getQuestion().getId());
+      }
+    } else if(attemptAnswer.getQuestion().isClosed()) {
+      throw new AttemptAnswerNotMatchingQuestion(attemptAnswer.getQuestion().getId());
     }
   }
 }
