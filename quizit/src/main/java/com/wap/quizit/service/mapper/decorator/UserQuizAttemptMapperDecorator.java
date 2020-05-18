@@ -71,15 +71,13 @@ public abstract class UserQuizAttemptMapperDecorator implements UserQuizAttemptM
       List<Answer> list = entity.getAttemptAnswers().stream()
           .filter(it -> it.getQuestion().getId().equals(question.getId())).map(UserQuizAttemptAnswer::getAnswerGiven)
           .collect(Collectors.toList());
+      List<Long> ids = list.stream().map(Answer::getId).collect(Collectors.toList());
+      questionSummary.answersGiven(ids);
       if(list.size() > 1) {
         int pointsGained = list.stream().map(Answer::getPointsCount).mapToInt(Integer::intValue).sum();
         questionSummary.pointsGained(pointsGained);
-        List<Long> ids = list.stream().map(Answer::getId).collect(Collectors.toList());
-        questionSummary.answersGiven(ids);
       } else {
         questionSummary.pointsGained(maxPoints);
-        // TODO error empty array in one-choice questions
-        questionSummary.answersGiven(Collections.emptyList());
       }
       questionSummaries.add(questionSummary.build());
     });
