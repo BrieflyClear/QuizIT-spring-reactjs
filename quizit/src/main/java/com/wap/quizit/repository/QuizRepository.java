@@ -10,5 +10,5 @@ import java.util.List;
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
   List<Quiz> findByTitleContainingIgnoreCase(String titleFragment);
-  List<Quiz> findByCategoriesId(Long categoryId);
+  List<Quiz> findByCategoriesCategoryId(Long categoryId);
 }

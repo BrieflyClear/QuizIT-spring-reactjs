@@ -78,6 +78,7 @@ public abstract class UserQuizAttemptMapperDecorator implements UserQuizAttemptM
         questionSummary.answersGiven(ids);
       } else {
         questionSummary.pointsGained(maxPoints);
+        // TODO error empty array in one-choice questions
         questionSummary.answersGiven(Collections.emptyList());
       }
       questionSummaries.add(questionSummary.build());

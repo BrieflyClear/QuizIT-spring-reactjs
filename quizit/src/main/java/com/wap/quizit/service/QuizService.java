@@ -28,7 +28,7 @@ public class QuizService {
   }
 
   public List<Quiz> getByCategoryId(Long categoryId) {
-    return quizRepository.findByCategoriesId(categoryId);
+    return quizRepository.findByCategoriesCategoryId(categoryId);
   }
 
   public List<Quiz> getByTitleFragment(String fragment) {
