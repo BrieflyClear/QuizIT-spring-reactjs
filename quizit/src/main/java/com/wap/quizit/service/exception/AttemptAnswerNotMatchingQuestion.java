@@ -6,8 +6,4 @@ public class AttemptAnswerNotMatchingQuestion extends RuntimeException {
   public AttemptAnswerNotMatchingQuestion(Long attemptAnswerId, Long questionId) {
     super("Attempt's answer [ID "+attemptAnswerId+"] not matching question ["+questionId+"]!");
   }
-
-  public AttemptAnswerNotMatchingQuestion(Long questionId) {
-    super("Question [" + questionId + "] is a closed question and cannot have null as answerGiven!");
-  }
 }

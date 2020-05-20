@@ -47,13 +47,12 @@ public class UserRestController {
     if(userService.getByEmailNoException(form.getEmail()).isPresent()) {
       throw new EmailAlreadyUsedException();
     }
-    var user = userMapper.map(form);
-    DataValidator.validateUser(user);
-    var newUser = userService.save(user);
+    var newUser = userService.save(userMapper.map(form));
+    DataValidator.validateUser(newUser);
     return new ResponseEntity<>(userMapper.map(newUser), HttpStatus.OK);
   }
 
-  @PostMapping("/login")
+  @GetMapping("/login")
   public ResponseEntity<UserDTO> login(@RequestBody LoginUserDTO loginForm) {
     var tmpUser = userService.getByEmail(loginForm.getEmail());
     if(!tmpUser.getPassword().equals(loginForm.getPassword())) {

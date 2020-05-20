@@ -1,11 +1,11 @@
 # QuizIT
 
-***current version: 0.6.0***
+***current version: 0.2.0***
 
 It is a server side application (REST API) that lets the users create, solve and share quizzes on any topic - it only depends on the user.
 
 ## Features
-* RESTful API
+* REST API
 * Browse the database of quizzes
 * Create your account and your own quizzes
 * Share the quizzes with others
@@ -13,7 +13,7 @@ It is a server side application (REST API) that lets the users create, solve and
 * Create quizzes by uploading a proper file
 
 ## Getting Started
- * The API: https://quizit-europe.herokuapp.com
+ * The API: ---
 
 ### How to use the API
 
@@ -23,6 +23,8 @@ It is a server side application (REST API) that lets the users create, solve and
 * [Java 13]()
   * [Spring Boot]()
   * [Spring Data JPA]()
+  * [Lombok]()
+  * [MapStruct]()
 * [Oracle Database 12c]()
 
 ## Author
