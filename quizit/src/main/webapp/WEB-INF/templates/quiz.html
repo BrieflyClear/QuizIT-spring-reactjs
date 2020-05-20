@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        * {margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            padding: 3px;}
+        nav {background-color: #fafafa;
+            border:1px solid #aaa;
+            padding: 15px;}
+        ul {list-style: none;
+            text-align: center;}
+        li {display: inline-block;
+            margin-right: 20px;}
+        li a {color: #000;}
+    </style>
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="/">Quizzes</a></li>
+        <li><a href="/add">Add</a></li>
+        <li><a href="/login">Log In</a></li>
+        <li><a href="/register">Register</a></li>
+        <button id="logout-button">Log Out</button>
+    </ul>
+</nav>
+
+<h1>Solve this quiz!</h1>
+<div id="quiz-info-div">
+    <ul>
+        <li id="quiz-title">Title: </li>
+        <li id="quiz-author">Author: </li>
+        <li id="quiz-categories">Categories: </li>
+    </ul>
+</div>
+
+<div id="questions-div" style="display:none">
+
+    <button id="submit-attempt">Finished!</button>
+</div>
+
+<button id="go-to-attempt" style="display:none">Go to results</button>
+
+<p id="for-unvalidated" style="display: inline">You need to be logged in to solve quizzes</p>
+
+</body>
+
+<script>
+    const logOutButton = document.getElementById("logout-button");
+    logOutButton.addEventListener('click', () => localStorage.removeItem('user'));
+
+    const apiURL = "http://quizit-europe.herokuapp.com/api/";
+    const submitAttemptButton = document.querySelector('#submit-attempt');
+
+    let user = {};
+    const validateUser = () => {
+        user = {...JSON.parse(localStorage.getItem('user'))};
+        const questionsDiv = document.querySelector('#questions-div');
+        const unvalidatedP = document.querySelector("#for-unvalidated");
+        if(user.id) {
+            questionsDiv.style.display = 'inline';
+            unvalidatedP.style.display = 'none';
+        } else {
+            questionsDiv.style.display = 'none';
+            unvalidatedP.style.display = 'inline';
+        }
+    }
+    validateUser();
+
+    async function getAllUrls(urls) {
+        try {
+            const data = await Promise.all(
+                urls.map(
+                    url =>
+                        fetch(apiURL+url)
+                            .then(res => res.json())
+                ));
+            return (data)
+        } catch (error) {
+            console.log(error)
+            throw (error)
+        }
+    }
+
+    let quiz = {};
+    let categories = [];
+    let questions = [];
+    let author = '';
+    let answers = [];
+    let attemptId = '';
+
+    const populateComments = (id, parent) => {
+        let comments = [];
+        fetch(apiURL+ 'comments/question/' + id)
+        .then(res => res.json())
+        .then(res => comments= [...res])
+        .then(() => {
+            const commentsUl = document.createElement('ul');
+            commentsUl.innerText = "Comments: "
+            comments.forEach(comment => {
+                const commentLi = document.createElement('li');
+                commentLi.innerText=comment.contents;
+                commentsUl.appendChild(commentLi);
+            });
+            parent.appendChild(commentsUl);
+        });
+    }
+
+    const populatePage = id => {
+        fetch(apiURL + "quizzes/" + id)
+            .then(res => res.json())
+            .then(res => quiz = {...res})
+            .then(() =>{
+                const urls = [];
+                urls.push("users/"+quiz.author);
+                quiz.categories.forEach(categoryId => {
+                    urls.push("categories/"+ categoryId)
+                });
+                quiz.questions.forEach(questionId => {
+                    urls.push("questions/"+ questionId)
+                });
+                getAllUrls(urls)
+                    .then(res => {
+                        author = {...res[0]};
+                        for(let i=1; i<=quiz.categories.length;i++) {
+                            categories.push(res[i]);
+                        }
+                        for(let i=quiz.categories.length+1; i<=Object.keys(res).length-1; i++) {
+                            questions.push(res[i]);
+                        }
+                    })
+                    .then(() => {
+                        const answersUrls = [];
+                        questions.forEach(question => {
+                            answersUrls.push('questions/'+ question.id + '/answers');
+                        });
+                        getAllUrls(answersUrls)
+                            .then(res => answers = [...res])
+                            .then(() => {
+                                const titleElement = document.querySelector("title");
+                                titleElement.innerText = quiz.title;
+                                const quizTitle = document.querySelector("#quiz-title");
+                                quizTitle.innerText += quiz.title;
+                                const quizAuthor = document.querySelector("#quiz-author");
+                                quizAuthor.innerText += author.username;
+                                const quizCategories = document.querySelector("#quiz-categories");
+                                categories.forEach(category => {
+                                    quizCategories.innerText+= category.name + ' ';
+                                });
+                                const questionsDiv = document.querySelector("#questions-div");
+
+                                questions.forEach((question, i) => {
+                                    const questionDiv = document.createElement('div');
+
+                                    questionDiv.setAttribute('class', 'question-div');
+                                    questionDiv.dataset.id = question.id;
+
+                                    const questionP = document.createElement('p');
+                                    questionP.innerText = "Question: " + question.contents;
+
+                                    questionDiv.appendChild(questionP)
+
+                                    if(question.isClosed && !question.isMultipleChoice){
+                                        const labelForAnswers = document.createElement('label');
+                                        labelForAnswers.innerText='Answers: ';
+                                        answers[i].forEach(answer => {
+                                            const labelForRadio = document.createElement('label');
+                                            labelForRadio.innerText = answer.contents;
+                                            const inputRadio = document.createElement('input');
+                                            inputRadio.setAttribute('type', 'radio');
+                                            inputRadio.setAttribute('value', answer.id);
+                                            inputRadio.setAttribute('name', ('question'+question.id));
+                                            labelForRadio.appendChild(inputRadio);
+                                            labelForAnswers.appendChild(labelForRadio);
+                                        });
+                                        questionDiv.dataset.isClosed = 'yes';
+                                        questionDiv.appendChild(labelForAnswers);
+
+                                    } else if (question.isClosed && question.isMultipleChoice) {
+                                        const labelForAnswers = document.createElement('label');
+                                        labelForAnswers.innerText='Answers: ';
+
+                                        answers[i].forEach(answer => {
+                                            const labelForRadio = document.createElement('label');
+                                            labelForRadio.innerText = answer.contents;
+                                            const inputRadio = document.createElement('input');
+                                            inputRadio.setAttribute('type', 'checkbox');
+                                            inputRadio.setAttribute('value', answer.id);
+                                            inputRadio.setAttribute('name', ('question'+question.id));
+                                            labelForRadio.appendChild(inputRadio);
+                                            labelForAnswers.appendChild(labelForRadio);
+                                        });
+                                        questionDiv.dataset.isClosed = 'yes';
+                                        questionDiv.appendChild(labelForAnswers);
+
+                                    } else {
+                                        const labelAnswerTextArea = document.createElement("label");
+                                        labelAnswerTextArea.innerText = 'Answer: ';
+                                        const answerTextArea = document.createElement("textarea");
+                                        answerTextArea.setAttribute('class', 'answer-textarea');
+                                        labelAnswerTextArea.appendChild(answerTextArea);
+                                        questionDiv.dataset.isClosed = 'no';
+
+                                        questionDiv.appendChild(labelAnswerTextArea);
+                                    }
+
+                                    const commentInput = document.createElement('input');
+                                    commentInput.setAttribute('type', 'text');
+                                    commentInput.setAttribute('class', 'comment-input');
+                                    commentInput.setAttribute('placeholder', 'Comment');
+
+                                    const submitCommentButton = document.createElement('button');
+                                    submitCommentButton.innerText= "Add Comment";
+                                    submitCommentButton.addEventListener('click', e => {
+                                        e.preventDefault();
+                                        const commentData = {
+                                            "author": user.id,
+                                            "contents": e.target.previousSibling.value,
+                                            "id": 0,
+                                            "issuedTime": null,
+                                            "question": question.id
+                                        }
+                                        const commentsOptions = {
+                                            method: "POST",
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify(commentData)
+                                        }
+                                        fetch(apiURL + "comments", commentsOptions)
+                                        .then(res => {
+                                            if(!res.ok) {throw res}
+                                            alert('Comment added');
+                                        })
+                                        .catch(err => {
+                                            alert('Something went wrong')
+                                            console.log(err);
+                                        })
+                                    });
+
+                                    const commentDiv = document.createElement('div');
+                                    populateComments(question.id, commentDiv);
+                                    commentDiv.appendChild(commentInput);
+                                    commentDiv.appendChild(submitCommentButton);
+
+                                    questionDiv.appendChild(commentDiv);
+
+                                    questionsDiv.appendChild(questionDiv);
+                                });
+                            });
+                    });
+            });
+    }
+
+    const handleAttemptSubmit = e => {
+        e.preventDefault();
+        const data = {
+            "attemptAnswers": [],
+            attemptTime: null,
+            "id": 0,
+            "quiz": quiz.id,
+            "user": user.id
+        };
+        const options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }
+        fetch(apiURL+"quizzes_attempts", options)
+        .then(res => {
+            if(!res.ok) {throw res}
+            return res.json()
+        })
+        .then(res => attemptId = res.id)
+            .then(() => {
+                const questionDivs = document.querySelectorAll('.question-div');
+                questionDivs.forEach(questionDiv => {
+                    if(questionDiv.dataset.isClosed === 'yes') {
+                        const answerInputs = document.querySelectorAll("div[data-id='" + questionDiv.dataset.id + "'] input[name='question" + questionDiv.dataset.id + "']");
+                        answerInputs.forEach(input => {
+                            if (input.checked) {
+                                const answerData ={
+                                    "answerGiven": parseInt(input.value),
+                                    "attempt": attemptId,
+                                    "id": 0,
+                                    "question": parseInt(questionDiv.dataset.id)
+                                };
+                                console.log(answerData);
+                                const answerOptions = {
+                                    method: "POST",
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(answerData)
+                                }
+                                fetch(apiURL + 'quizzes_attempts/answer', answerOptions)
+                                .then(res => {
+                                    if(!res.ok) {throw res}
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                    // alert('Something went wrong');
+                                })
+                            }
+                        });
+                    } else {
+                        const answerData = {
+                            "answerGiven": null,
+                            "attempt": attemptId,
+                            "id": 0,
+                            "question": parseInt(questionDiv.dataset.id)
+                        };
+                        console.log(answerData);
+                        const answerOptions = {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(answerData)
+                        }
+                        fetch(apiURL + 'quizzes_attempts/answer', answerOptions)
+                            .then(res => {
+                                if(!res.ok) {throw res}
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                alert('Something went wrong');
+                            })
+                    }
+                });
+            })
+            .then(() => {
+                const goToButton = document.querySelector('#go-to-attempt');
+                goToButton.style.display = 'inline';
+                goToButton.addEventListener('click', () => window.location = '/attempts/' + attemptId)
+            })
+        .catch(err => {
+            console.log(err);
+            alert('Something went wrong');
+        })
+    }
+
+    submitAttemptButton.addEventListener('click', handleAttemptSubmit);
+    populatePage(window.location.pathname.substr(9))
+
+</script>
+</html>
