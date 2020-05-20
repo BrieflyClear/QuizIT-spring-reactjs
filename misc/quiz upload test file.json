@@ -1,0 +1,26 @@
+{
+	"isPublic": false,
+	"title": "Matma",
+	"categories": [
+		"lo ", "lololo"
+	],
+	"questions": [
+		{
+			"contents": "Ile to 2+2?",
+			"isMultipleChoice": false,
+			"isClosed": true,
+			"answers": [
+				{
+					"contents": "4",
+					"isCorrect": true,
+					"pointsCount": 4
+				},
+				{
+					"contents": "5",
+					"isCorrect": false,
+					"pointsCount": 0
+				}
+			]
+		}
+	]
+}
