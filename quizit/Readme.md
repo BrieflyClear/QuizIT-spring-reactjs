@@ -23,6 +23,8 @@ It is a server side application (REST API) that lets the users create, solve and
 * [Java 13]()
   * [Spring Boot]()
   * [Spring Data JPA]()
+  * [Lombok]()
+  * [MapStruct]()
 * [Oracle Database 12c]()
 
 ## Author
