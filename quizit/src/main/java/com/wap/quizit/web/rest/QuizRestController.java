@@ -35,25 +35,32 @@ public class QuizRestController {
   private UserService userService;
 
   @GetMapping("/{id}")
-  public ResponseEntity<QuizDTO> get(@PathVariable Long id) {
-    return new ResponseEntity<>(quizMapper.map(quizService.getById(id)), HttpStatus.OK);
+  public ResponseEntity<QuizDTO> get(@PathVariable Long id,
+                                     @RequestParam(value = "include_private", required = false,
+                                         defaultValue = "false") boolean includePrivate) {
+    return new ResponseEntity<>(quizMapper.map(quizService.getById(id, includePrivate)), HttpStatus.OK);
   }
 
   @GetMapping("/title/{titleFragment}")
-  public ResponseEntity<List<QuizDTO>> getByTitle(@PathVariable String titleFragment) {
-    List<QuizDTO> list = quizService.getByTitleFragment(titleFragment).stream().map(quizMapper::map).collect(Collectors.toList());
+  public ResponseEntity<List<QuizDTO>> getByTitle(@PathVariable String titleFragment,
+                                                  @RequestParam(value = "include_private", required = false,
+                                                      defaultValue = "false") boolean includePrivate) {
+    List<QuizDTO> list = quizService.getByTitleFragment(titleFragment, includePrivate).stream().map(quizMapper::map).collect(Collectors.toList());
     return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
   @GetMapping("/category/{categoryId}")
-  public ResponseEntity<List<QuizDTO>> getByCategoryId(@PathVariable Long categoryId) {
-    List<QuizDTO> list = quizService.getByCategoryId(categoryId).stream().map(quizMapper::map).collect(Collectors.toList());
+  public ResponseEntity<List<QuizDTO>> getByCategoryId(@PathVariable Long categoryId,
+                                                       @RequestParam(value = "include_private", required = false,
+                                                           defaultValue = "false") boolean includePrivate) {
+    List<QuizDTO> list = quizService.getByCategoryId(categoryId, includePrivate).stream().map(quizMapper::map).collect(Collectors.toList());
     return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
   @GetMapping
-  public ResponseEntity<List<QuizDTO>> getAll() {
-    List<QuizDTO> list = quizService.getAll().stream().map(quizMapper::map).collect(Collectors.toList());
+  public ResponseEntity<List<QuizDTO>> getAll(@RequestParam(value = "include_private", required = false,
+      defaultValue = "false") boolean includePrivate) {
+    List<QuizDTO> list = quizService.getAll(includePrivate).stream().map(quizMapper::map).collect(Collectors.toList());
     return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
@@ -96,7 +103,7 @@ public class QuizRestController {
 
   @GetMapping("/{id}/download")
   public ResponseEntity<Resource> downloadQuiz(@PathVariable("id") Long id) throws IOException {
-    var quiz = quizService.getById(id);
+    var quiz = quizService.getById(id, true);
     String fileName = jsonToQuizParser.parseQuizToJsonFile(quiz);
     Resource resource = storageService.loadAsResource(fileName);
     return ResponseEntity.ok()
