@@ -128,7 +128,7 @@ public class DataValidator {
          }
         /** multiple choice questions don't have any special requirements */
         if(!question.isMultipleChoice()) {
-          if(question.getAnswers().stream().map(Answer::isCorrect).count() > 1) {
+          if(question.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {
             throw new EntityFieldValidationException(Question.class.getSimpleName(), "answers", "---",
                 "Non multiple-choice question cannot have multiple correct answers!");
           }
@@ -165,7 +165,7 @@ public class DataValidator {
   public static void validateAnswer(Answer answer) {
     if(!Pattern.matches(Constants.ANSWER_REGEX, answer.getContents())) {
       throw new EntityFieldValidationException(
-          Answer.class.getSimpleName(), "contents", answer.getContents(), "Question is too short or too long! " +
+          Answer.class.getSimpleName(), "contents", answer.getContents(), "Answer is too short or too long! " +
           "Length must be in range 3-4000 characters.");
     }
     validateAnswerPoints(answer);
@@ -206,9 +206,13 @@ public class DataValidator {
     if(!attemptAnswer.getAttempt().getQuiz().getId().equals(attemptAnswer.getQuestion().getQuiz().getId())) {
       throw new AttemptAnswerNotMatchingQuiz(attemptAnswer.getId(), attemptAnswer.getAttempt().getId());
     }
-    if(attemptAnswer.getQuestion().getAnswers()
-        .stream().noneMatch(it -> it.getId().equals(attemptAnswer.getAnswerGiven().getId()))) {
-      throw new AttemptAnswerNotMatchingQuestion(attemptAnswer.getId(), attemptAnswer.getQuestion().getId());
+    if(attemptAnswer.getAnswerGiven() != null) {
+      if(attemptAnswer.getQuestion().getAnswers()
+          .stream().noneMatch(it -> it.getId().equals(attemptAnswer.getAnswerGiven().getId()))) {
+        throw new AttemptAnswerNotMatchingQuestion(attemptAnswer.getId(), attemptAnswer.getQuestion().getId());
+      }
+    } else if(attemptAnswer.getQuestion().isClosed()) {
+      throw new AttemptAnswerNotMatchingQuestion(attemptAnswer.getQuestion().getId());
     }
   }
 }

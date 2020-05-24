@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,6 +37,18 @@ public class QuizRestController {
   @GetMapping("/{id}")
   public ResponseEntity<QuizDTO> get(@PathVariable Long id) {
     return new ResponseEntity<>(quizMapper.map(quizService.getById(id)), HttpStatus.OK);
+  }
+
+  @GetMapping("/title/{titleFragment}")
+  public ResponseEntity<List<QuizDTO>> getByTitle(@PathVariable String titleFragment) {
+    List<QuizDTO> list = quizService.getByTitleFragment(titleFragment).stream().map(quizMapper::map).collect(Collectors.toList());
+    return new ResponseEntity<>(list, HttpStatus.OK);
+  }
+
+  @GetMapping("/category/{categoryId}")
+  public ResponseEntity<List<QuizDTO>> getByCategoryId(@PathVariable Long categoryId) {
+    List<QuizDTO> list = quizService.getByCategoryId(categoryId).stream().map(quizMapper::map).collect(Collectors.toList());
+    return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
   @GetMapping
