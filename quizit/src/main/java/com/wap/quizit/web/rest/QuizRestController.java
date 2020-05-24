@@ -57,6 +57,14 @@ public class QuizRestController {
     return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
+  @GetMapping("/author/{authorId}")
+  public ResponseEntity<List<QuizDTO>> getByAuthorId(@PathVariable Long authorId,
+                                                       @RequestParam(value = "include_private", required = false,
+                                                           defaultValue = "false") boolean includePrivate) {
+    List<QuizDTO> list = quizService.getByAuthorId(authorId, includePrivate).stream().map(quizMapper::map).collect(Collectors.toList());
+    return new ResponseEntity<>(list, HttpStatus.OK);
+  }
+
   @GetMapping
   public ResponseEntity<List<QuizDTO>> getAll(@RequestParam(value = "include_private", required = false,
       defaultValue = "false") boolean includePrivate) {

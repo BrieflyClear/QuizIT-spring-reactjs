@@ -51,6 +51,14 @@ public class QuizService {
     }
   }
 
+  public List<Quiz> getByAuthorId(Long authorId, boolean includePrivate) {
+    if(includePrivate) {
+      return quizRepository.findByAuthorId(authorId);
+    } else {
+      return quizRepository.findByAuthorIdAndIsPublic(authorId, true);
+    }
+  }
+
   public Quiz save(Quiz quiz) {
     return quizRepository.save(quiz);
   }

@@ -16,4 +16,6 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
   List<Quiz> findAllByIsPublic(boolean isPublic);
   Optional<Quiz> findByIdAndIsPublic(Long id, boolean isPublic);
   List<Quiz> findByCategoriesCategoryId(Long categoryId);
+  List<Quiz> findByAuthorId(Long authorId);
+  List<Quiz> findByAuthorIdAndIsPublic(Long authorId, boolean isPublic);
 }
