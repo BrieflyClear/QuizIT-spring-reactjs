@@ -1,6 +1,9 @@
 package com.wap.quizit.web.rest.errors;
 
-import com.wap.quizit.service.exception.*;
+import com.wap.quizit.service.exception.EntityFieldValidationException;
+import com.wap.quizit.service.exception.EntityNotFoundException;
+import com.wap.quizit.service.exception.InvalidPasswordException;
+import com.wap.quizit.service.exception.UserNotExistsException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -56,30 +59,6 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     Error error = new Error(BAD_REQUEST);
     error.setMessage("Could not parse Json file! Internal message: " + ex.getMessage());
     return buildResponseEntity(error);
-  }
-
-  @ExceptionHandler({AttemptAnswerNotMatchingQuestion.class,
-      AttemptAnswerNotMatchingQuiz.class,
-      EmailAlreadyUsedException.class,
-      UsernameAlreadyUsedException.class})
-  protected ResponseEntity<Object> handleBadRequests(RuntimeException ex, WebRequest request) {
-    Error apiError = new Error(BAD_REQUEST);
-    apiError.setMessage(ex.getMessage());
-    return buildResponseEntity(apiError);
-  }
-
-  @ExceptionHandler({FileNotFoundException.class})
-  protected ResponseEntity<Object> handleFileNotFound(FileNotFoundException ex, WebRequest request) {
-    Error apiError = new Error(NOT_FOUND);
-    apiError.setMessage(ex.getMessage());
-    return buildResponseEntity(apiError);
-  }
-
-  @ExceptionHandler({StorageException.class})
-  protected ResponseEntity<Object> handleStorageException(StorageException ex, WebRequest request) {
-    Error apiError = new Error(INTERNAL_SERVER_ERROR);
-    apiError.setMessage(ex.getMessage());
-    return buildResponseEntity(apiError);
   }
 
   @Override
