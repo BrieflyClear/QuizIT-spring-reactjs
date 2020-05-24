@@ -27,6 +27,14 @@ public class QuizService {
     return quizRepository.findAll();
   }
 
+  public List<Quiz> getByCategoryId(Long categoryId) {
+    return quizRepository.findByCategoriesCategoryId(categoryId);
+  }
+
+  public List<Quiz> getByTitleFragment(String fragment) {
+    return quizRepository.findByTitleContainingIgnoreCase(fragment);
+  }
+
   public Quiz save(Quiz quiz) {
     return quizRepository.save(quiz);
   }

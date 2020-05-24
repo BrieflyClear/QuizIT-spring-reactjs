@@ -18,7 +18,6 @@ public class RegisterUserDTO {
 
   @NotNull
   @NotBlank
-  @Email
   @Size(min = 5, max = 254)
   String email;
 
