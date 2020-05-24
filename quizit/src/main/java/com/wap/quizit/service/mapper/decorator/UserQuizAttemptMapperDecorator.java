@@ -35,7 +35,7 @@ public abstract class UserQuizAttemptMapperDecorator implements UserQuizAttemptM
   @Override
   public UserQuizAttempt map(UserQuizAttemptDTO dto) {
     var userAttempt = delegate.map(dto);
-    userAttempt.setQuiz(quizService.getById(dto.getQuiz()));
+    userAttempt.setQuiz(quizService.getById(dto.getQuiz(), true));
     userAttempt.setUser(userService.getById(dto.getUser()));
     Set<UserQuizAttemptAnswer> answers = new HashSet<>();
     dto.getAttemptAnswers().forEach(id -> answers.add(userAnswerService.getQuizAttemptAnswerById(id)));

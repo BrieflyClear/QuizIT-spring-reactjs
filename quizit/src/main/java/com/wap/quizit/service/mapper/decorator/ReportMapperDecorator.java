@@ -21,7 +21,7 @@ public abstract class ReportMapperDecorator implements ReportMapper {
   @Override
   public Report map(ReportDTO dto) {
     var report = delegate.map(dto);
-    report.setReportedQuiz(quizService.getById(dto.getReportedQuiz()));
+    report.setReportedQuiz(quizService.getById(dto.getReportedQuiz(), true));
     report.setReportingUser(userService.getById(dto.getReportingUser()));
     return report;
   }
