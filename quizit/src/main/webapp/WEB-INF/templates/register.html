@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        * {margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            padding: 3px;}
+        nav {background-color: #fafafa;
+            border:1px solid #aaa;
+            padding: 15px;}
+        ul {list-style: none;
+            text-align: center;}
+        li {display: inline-block;
+            margin-right: 20px;}
+        li a {color: #000;}
+    </style>
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="/">Quizzes</a></li>
+        <li><a href="/add">Add</a></li>
+        <li><a href="/login">Log In</a></li>
+        <li><a href="/register">Register</a></li>
+        <button id="logout-button">Log Out</button>
+
+    </ul>
+</nav>
+
+<h1>Register here</h1>
+<form id="register-form">
+    <label>E-mail:
+        <input type="email" id="email-input" placeholder="E-mail" />
+    </label>
+
+    <label>Username:
+        <input type="text" id="username-input" placeholder="Username" />
+    </label>
+
+    <label>Password:
+        <input type="text" id="password-input" placeholder="Password" />
+    </label>
+
+    <button type="submit">Log In</button>
+
+</form>
+</body>
+<script>
+    const logOutButton = document.getElementById("logout-button");
+    logOutButton.addEventListener('click', () => localStorage.removeItem('user'));
+
+    const apiURL = "http://quizit-europe.herokuapp.com/api/";
+
+    const registerForm = document.querySelector("#register-form");
+
+    const handleRegisterSubmit = e => {
+        e.preventDefault();
+        const emailInput = document.querySelector("#email-input");
+        const usernameInput = document.querySelector("#username-input");
+        const passwordInput = document.querySelector("#password-input");
+
+        if(emailInput.value && passwordInput.value && usernameInput.value) {
+            const options = {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"email": emailInput.value, "password": passwordInput.value, "username": usernameInput.value})
+            }
+            fetch(apiURL+"users/register", options)
+                .then(res => {
+                    if (!res.ok) {throw res}
+                    alert('Succesfully registered!')
+                })
+                .catch(err => {
+                    console.log(err);
+                    alert('Wrong email or this username is already in use');
+                });
+        } else {
+            alert('One or more spaces was not filled');
+        }
+    }
+
+    registerForm.addEventListener('submit', handleRegisterSubmit)
+</script>
+</html>
