@@ -33,7 +33,7 @@ public abstract class UserMapperDecorator implements UserMapper {
     var user = delegate.map(dto);
     user.setRole(roleService.getById(dto.getRole()));
     Set<Quiz> quizzes = new HashSet<>();
-    dto.getQuizzes().forEach(id -> quizzes.add(quizService.getById(id)));
+    dto.getQuizzes().forEach(id -> quizzes.add(quizService.getById(id, true)));
     Set<Comment> comments = new HashSet<>();
     dto.getComments().forEach(id -> comments.add(commentService.getById(id)));
     Set<Report> reports = new HashSet<>();

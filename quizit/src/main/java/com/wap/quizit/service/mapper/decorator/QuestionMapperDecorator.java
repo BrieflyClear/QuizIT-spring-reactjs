@@ -38,7 +38,7 @@ public abstract class QuestionMapperDecorator implements QuestionMapper {
   @Override
   public Question map(QuestionDTO dto) {
     var question = delegate.map(dto);
-    question.setQuiz(quizService.getById(dto.getQuiz()));
+    question.setQuiz(quizService.getById(dto.getQuiz(), true));
     Set<Answer> answers = new HashSet<>();
     dto.getAnswers().forEach(id -> answers.add(answerService.getById(id)));
     Set<Comment> comments = new HashSet<>();
@@ -55,7 +55,7 @@ public abstract class QuestionMapperDecorator implements QuestionMapper {
   @Override
   public Question map(CreateQuestionDTO dto) {
     var question = delegate.map(dto);
-    question.setQuiz(quizService.getById(dto.getQuiz()));
+    question.setQuiz(quizService.getById(dto.getQuiz(), true));
     Set<Answer> answers = new HashSet<>();
     dto.getAnswers().forEach(answer -> answers.add(answerMapper.map(answer)));
     answers.forEach(it -> it.setQuestion(question));
