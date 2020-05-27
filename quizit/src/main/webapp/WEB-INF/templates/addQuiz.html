@@ -7,33 +7,52 @@
         * {margin-left: auto;
             margin-right: auto;
             text-align: center;
-            padding: 3px;}
-        nav {background-color: #fafafa;
+            padding: 3px;
+            font-family: "Segoe UI";
+        }
+        nav {background-color: #2a99f5;
             border:1px solid #aaa;
-            padding: 15px;}
-        ul {list-style: none;
+            padding: 15px;
+            color: #fff;}
+        nav ul {list-style: none;
             text-align: center;}
-        li {display: inline-block;
+        nav li {display: inline-block;
             margin-right: 20px;}
-        li a {color: #000;}
+        a {color: #fff;}
+        nav li button{background-color: #fff;
+            color: #2a99f5;
+            border:none;}
+        nav li button:hover{cursor: pointer;}
+        .introduction{color: #2a99f5; margin-top: 10px; margin-bottom: 10px}
+
+        button {background-color: #fff;
+            color: #2a99f5;
+            border-color: #2a99f5;}
+        button:focus{outline: #227dc7;}
+        button:hover{cursor: pointer}
+        #add-quiz-form >label {
+            display: block;
+        }
+        #add-quiz-form{color:#2a99f5}
     </style>
 </head>
 <body>
 <nav>
     <ul>
         <li><a href="/">Quizzes</a></li>
-        <li><a href="/add">Add</a></li>
-        <li><a href="/login">Log In</a></li>
-        <li><a href="/register">Register</a></li>
-        <button id="logout-button">Log Out</button>
-
+        <li class="for-validated" style="display: none"><a href="/add">Add</a></li>
+        <li class="for-validated" style="display: none"><a href="/myQuizzes">My Quizzes</a></li>
+        <li class="for-unvalidated" style="display: none"><a href="/login">Log In</a></li>
+        <li class="for-unvalidated" style="display: none"><a href="/register">Register</a></li>
+        <li class="for-validated" id="user-welcome" style="display: none"></li>
+        <li class="for-validated" style="display: none"><button id="logout-button">Log Out</button></li>
     </ul>
 </nav>
 
-<h1>Add a Quiz</h1>
-<p id="for-unvalidated">You need to be logged in to add quizzes</p>
+<h1 class="introduction">Add a Quiz</h1>
+<p class="for-unvalidated"  style="display: none; color: #2a99f5">You need to be logged in to add quizzes</p>
 
-<form id="add-quiz-form" style="display:none">
+<form id="add-quiz-form" class="for-validated" style="display: none">
     <label>Title*:
         <input id="title-input" type="text" name="title" placeholder="Title" />
     </label>
@@ -42,14 +61,14 @@
         <input id="public-checkbox" type="checkbox" name="isPublic" />
     </label>
 
-    <label id="categories-checkboxes">Category*:
+    <label id="categories-checkboxes">Category*:<br/>
 
     </label>
 
     <button type="submit">Start adding questions</button>
 </form>
-<form id="file-add-quiz" style="display:none">
-    <h3>OR upload a json with the quiz</h3>
+<form id="file-add-quiz" class="for-validated" style="display: none">
+    <h1 class="introduction">OR upload a json with the quiz</h1>
     <input type="file"  id="quiz-file" name="quiz-file" accept=".json"/>
     <button type="submit">Upload</button>
 </form>
@@ -76,36 +95,42 @@
 
 </body>
 <script>
-    const apiURL = "http://quizit-europe.herokuapp.com/api/";
     const categoriesCheckboxes = document.querySelector("#categories-checkboxes");
     const addQuizForm = document.querySelector("#add-quiz-form");
     const addQuestionForm = document.querySelector("#add-question-form");
     const questionTypeSelect = document.querySelector("#type-select");
     const fileForm = document.querySelector('#file-add-quiz');
+    const finishedButton = document.querySelector('#finished-button');
+
     let quizId = '';
 
-    const logOutButton = document.getElementById("logout-button");
-    logOutButton.addEventListener('click', () => localStorage.removeItem('user'));
-
+    const apiURL = "http://localhost:8080/api/";
     let user = {};
     const validateUser = () => {
         user = {...JSON.parse(localStorage.getItem('user'))};
-        const unvalidatedP = document.querySelector("#for-unvalidated");
         if(user.id) {
-            addQuizForm.style.display = 'inline';
-            fileForm.style.display = 'inline';
-            unvalidatedP.style.display = 'none';
-
+            const forValidatedElements = document.querySelectorAll(".for-validated");
+            forValidatedElements.forEach(element => {
+                element.style.display= 'inline';
+            });
+            const userWelcome = document.getElementById("user-welcome");
+            userWelcome.innerText = "Hello\xa0" + user.username;
+            const logOutButton = document.getElementById("logout-button");
+            logOutButton.addEventListener('click', () => {
+                localStorage.removeItem('user');
+                window.location = '/';
+            });
         } else {
-            addQuizForm.style.display = 'none';
-            fileForm.style.display = 'none';
-            unvalidatedP.style.display = 'inline';
+            const forUnValidatedElements = document.querySelectorAll(".for-unvalidated");
+            forUnValidatedElements.forEach(element => {
+                element.style.display= 'inline';
+            });
         }
     }
     validateUser();
 
     const populateCategories = () => {
-        fetch("http://quizit-europe.herokuapp.com/api/categories")
+        fetch(apiURL + "categories")
             .then(res => res.json())
             .then(res => res.forEach((category => {
                 const categorySelectCheckbox = document.createElement('input');
@@ -267,7 +292,6 @@
 
         if(questionTypeSelect.value === 'open') {
             const openAnswerInput = document.querySelector('#answer-area textarea');
-
             const data = {
                 "answers": [
                     {
@@ -295,10 +319,12 @@
                     e.target.reset();
                     const answerArea = document.querySelector('#answer-area');
                     answerArea.innerHTML= '';
-                    const finishedButton = document.querySelector('#finished-button');
                     finishedButton.style.display = 'inline';
                     alert('Question added!');
+                    //
+                    return res.json();
                 })
+                .then(res => console.log(res))
                 .catch(err => {
                     console.log(err);
                     alert('Something went wrong');
@@ -348,12 +374,12 @@
                         e.target.reset();
                         const answerArea = document.querySelector('#answer-area');
                         answerArea.innerHTML= '';
-                        const finishedButton = document.querySelector('#finished-button');
                         finishedButton.style.display = 'inline';
                         alert('Question added!')
+                        //
+                        return res.json();
                     })
                     .catch(err => {
-                        console.log(data);
                         console.log(err);
                         alert('Something went wrong');
                     });
@@ -375,8 +401,6 @@
             body: formData
         };
 
-        console.log(formData);
-
         fetch(apiURL+ 'quizzes/fromFile?userId=' + user.id, options)
         .then(res => {
             if(!res.ok) {throw res}
@@ -390,6 +414,10 @@
 
     populateCategories();
 
+    finishedButton.addEventListener('click', e => {
+        e.preventDefault();
+        window.location = "/quizzes/" + quizId;
+    })
     fileForm.addEventListener('submit', handleFileSubmit)
     addQuizForm.addEventListener('submit', handleQuizSubmit);
     addQuestionForm.addEventListener('submit', handleQuestionSubmit);
