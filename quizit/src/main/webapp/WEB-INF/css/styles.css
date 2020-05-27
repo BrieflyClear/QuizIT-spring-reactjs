@@ -1,0 +1,18 @@
+* {margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 3px;
+    font-family: "Segoe UI"}
+nav {background-color: #2a99f5;
+    border:1px solid #aaa;
+    padding: 15px;}
+nav ul {list-style: none;
+    text-align: center;}
+nav li {display: inline-block;
+    margin-right: 20px;}
+a {color: #fff;}
+nav li button{background-color: #fff;
+    color: #2a99f5;
+    border:none;}
+nav li button:hover{cursor: pointer;}
+.introduction{color: #2a99f5; margin-top: 10px; margin-bottom: 10px}

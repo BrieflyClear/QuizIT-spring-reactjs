@@ -1,5 +1,7 @@
 package com.wap.quizit.service.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 
@@ -9,7 +11,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Value
-@Builder
+@JsonDeserialize(builder = LoginUserDTO.Builder.class)
+@Builder(builderClassName = "Builder", toBuilder = true)
 public class LoginUserDTO {
 
   @NotNull @NotBlank
@@ -18,4 +21,8 @@ public class LoginUserDTO {
   String email;
 
   @NotBlank @NotNull String password;
+
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class Builder {
+  }
 }

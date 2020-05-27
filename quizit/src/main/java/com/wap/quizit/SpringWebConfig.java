@@ -37,9 +37,10 @@ public class SpringWebConfig implements ApplicationContextAware, WebMvcConfigure
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         WebMvcConfigurer.super.addResourceHandlers(registry);
-        registry.addResourceHandler("/images/**").addResourceLocations("/images/");
-        registry.addResourceHandler("/css/**").addResourceLocations("/css/");
+        registry.addResourceHandler("images/**").addResourceLocations("/images/");
+        registry.addResourceHandler("/src/main/webapp/WEB-INF/resources/css/**").addResourceLocations("/src/main/webapp/WEB-INF/resources/css/");
         registry.addResourceHandler("/js/**").addResourceLocations("/js/");
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
     }
 
     @Bean

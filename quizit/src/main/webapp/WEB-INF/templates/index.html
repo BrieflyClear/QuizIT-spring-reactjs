@@ -10,15 +10,29 @@
         * {margin-left: auto;
             margin-right: auto;
             text-align: center;
-            padding: 3px;}
-        nav {background-color: #fafafa;
+            padding: 3px;
+            font-family: "Segoe UI"}
+        nav {background-color: #2a99f5;
             border:1px solid #aaa;
-            padding: 15px;}
-        ul {list-style: none;
+            padding: 15px;
+            color: #fff;}
+        nav ul {list-style: none;
             text-align: center;}
-        li {display: inline-block;
+        nav li {display: inline-block;
             margin-right: 20px;}
-        li a {color: #000;}
+        a {color: #fff;}
+        nav li button{background-color: #fff;
+            color: #2a99f5;
+            border:none;}
+        button:hover{cursor: pointer}
+        .introduction{color: #2a99f5; margin-top: 10px; margin-bottom: 10px}
+
+        .quiz-list-link {height: 100px; width: 100px; background-color: #2a99f5; color: #fff; margin: 10px; display: inline-block; text-decoration: none; }
+        #search-form>*{margin:3px; color: #2a99f5; background-color: #fff}
+        #search-form button {border-color: #2a99f5}
+        #none-found{color: #2a99f5}
+        #encourage-text{background-color: #2a99f5;}
+        #encourage-text>*{width:60%; color: white;}
     </style>
 </head>
 
@@ -26,39 +40,73 @@
 <nav>
     <ul>
         <li><a href="/">Quizzes</a></li>
-        <li><a href="/add">Add</a></li>
-        <li><a href="/login">Log In</a></li>
-        <li><a href="/register">Register</a></li>
-        <button id="logout-button">Log Out</button>
-
+        <li class="for-validated" style="display: none"><a href="/add">Add</a></li>
+        <li class="for-validated" style="display: none"><a href="/myQuizzes">My Quizzes</a></li>
+        <li class="for-unvalidated" style="display: none"><a href="/login">Log In</a></li>
+        <li class="for-unvalidated" style="display: none"><a href="/register">Register</a></li>
+        <li class="for-validated" id="user-welcome" style="display: none"></li>
+        <li class="for-validated" style="display: none"><button id="logout-button">Log Out</button></li>
     </ul>
 </nav>
 
-<h1>This is a QUIZ IT website.</h1>
+<h1 class="introduction">This is a QuizIT website.</h1>
+<div id="encourage-text" class="for-unvalidated" style="display: none;">
+    <h2>Why should you start using QuizIT?</h2>
+    <p>Solving quizzes is very rewarding While studying books and PDF presentations in mind numbing and it has
+        you filtering useless from useful knowledge every single time you want to revise
+        Creating quizzes would help you learn by forcing you to create the questions yourself and studying
+        literature and material for the subjects ONCE AND FOR ALL!
+    </p>
+</div>
 <form id="search-form">
-    <input id="title-input" type="text" name="search-title" placeholder="Title" />
-    <button type="submit">Search!</button>
+    <label>Search by title:
+        <input id="title-input" type="text" name="search-title" placeholder="Title" />
+    </label>
+    <button type="submit">Search!</button> <br/>
+
+    <label>Or filter by category:
+        <select id="category-select">
+            <option value="" disabled selected>---</option>
+        </select>
+    </label>
 </form>
 
-<select id="category-select">
-<option value="" disabled selected>---</option>
-</select>
-
 <div id="quiz-list-div">
-    Quizzes:
-    <ul id="quiz-list">
-
-    </ul>
+    <h1 class="introduction">Quizzes:</h1>
+    <div id="quiz-list">
+        <p id="none-found" style="display: none; color: #2a99f5"></p>
+    </div>
 </div>
 </body>
 
 <script>
-
-    const logOutButton = document.getElementById("logout-button");
-    logOutButton.addEventListener('click', () => localStorage.removeItem('user'));
+    const apiURL = "http://localhost:8080/api/";
+    let user = {};
+    const validateUser = () => {
+        user = {...JSON.parse(localStorage.getItem('user'))};
+        if(user.id) {
+            const forValidatedElements = document.querySelectorAll(".for-validated");
+            forValidatedElements.forEach(element => {
+                element.style.display= 'inline';
+            });
+            const userWelcome = document.getElementById("user-welcome");
+            userWelcome.innerText = "Hello\xa0" + user.username;
+            const logOutButton = document.getElementById("logout-button");
+            logOutButton.addEventListener('click', () => {
+                localStorage.removeItem('user');
+                window.location = '/';
+            });
+        } else {
+            const forUnValidatedElements = document.querySelectorAll(".for-unvalidated");
+            forUnValidatedElements.forEach(element => element.style.display= 'inline');
+            const encourageText = document.getElementById("encourage-text");
+            encourageText.style.display = 'block';
+        }
+    }
+    validateUser();
 
     const populateCategories = () => {
-        fetch("http://quizit-europe.herokuapp.com/api/categories")
+        fetch(apiURL + "categories")
             .then(res => res.json())
             .then(res => res.forEach((category => {
                 const categorySelectOption = document.createElement('option');
@@ -70,33 +118,66 @@
     }
 
     const populateQuizzes = (title, categoryId) => {
-        const quizListUl = document.querySelector("#quiz-list");
-        quizListUl.innerHTML= '';
+        const quizListDiv = document.querySelector("#quiz-list");
+        quizListDiv.innerHTML= '';
 
         if(!title && !categoryId){
-            fetch("http://quizit-europe.herokuapp.com/api/quizzes")
+            fetch(apiURL + "quizzes")
                 .then(res => res.json())
-                .then(res => res.forEach((quiz => {
-                    const quizListLi = document.createElement('li');
-                    quizListLi.innerHTML = "<a href='/quizzes/" + quiz.id + "' />" + quiz.title + "</a>";
-                    quizListUl.appendChild(quizListLi);
-                })));
+                .then(res => {
+                    if(!res.length) {
+                        const noneFoundP = document.createElement('p');
+                        noneFoundP.setAttribute('id', 'none-found');
+                        noneFoundP.innerText = 'There are no quizzes matching search conditions.';
+                        quizListDiv.appendChild(noneFoundP);
+                    } else {
+                        res.forEach((quiz => {
+                            const quizLink = document.createElement('a');
+                            quizLink.setAttribute('class', 'quiz-list-link');
+                            quizLink.setAttribute('href', "quizzes/" + quiz.id);
+                            quizLink.innerText = quiz.title;
+                            quizListDiv.appendChild(quizLink);
+                        }))
+                    }
+                });
         } else if (title) {
-            fetch("http://quizit-europe.herokuapp.com/api/quizzes/title/"+title)
+            fetch(apiURL + "quizzes/title/"+title)
                 .then(res => res.json())
-                .then(res => res.forEach((quiz => {
-                    const quizListLi = document.createElement('li');
-                    quizListLi.innerHTML = "<a href='/quizzes/" + quiz.id + "' />" + quiz.title + "</a>";
-                    quizListUl.appendChild(quizListLi);
-                })));
+                .then(res => {
+                    if(!res.length) {
+                        const noneFoundP = document.createElement('p');
+                        noneFoundP.setAttribute('id', 'none-found');
+                        noneFoundP.innerText = 'There are no quizzes matching search conditions.';
+                        quizListDiv.appendChild(noneFoundP);
+                    } else {
+                        res.forEach((quiz => {
+                            const quizLink = document.createElement('a');
+                            quizLink.setAttribute('class', 'quiz-list-link');
+                            quizLink.setAttribute('href', "quizzes/" + quiz.id);
+                            quizLink.innerText =  quiz.title;
+                            quizListDiv.appendChild(quizLink);
+                        }))
+                    }
+                });
         } else if (categoryId) {
-            fetch("http://quizit-europe.herokuapp.com/api/quizzes/category/"+categoryId)
+            fetch(apiURL + "quizzes/category/"+categoryId)
                 .then(res => res.json())
-                .then(res => res.forEach((quiz => {
-                    const quizListLi = document.createElement('li');
-                    quizListLi.innerHTML = "<a href='/quizzes/" + quiz.id + "' />" + quiz.title + "</a>";
-                    quizListUl.appendChild(quizListLi);
-                })));
+                .then(res => {
+                    if(!res.length) {
+                        const noneFoundP = document.createElement('p');
+                        noneFoundP.setAttribute('id', 'none-found');
+                        noneFoundP.innerText = 'There are no quizzes matching search conditions.';
+                        quizListDiv.appendChild(noneFoundP);
+                    } else {
+                        res.forEach((quiz => {
+                            const quizLink = document.createElement('a');
+                            quizLink.setAttribute('class', 'quiz-list-link');
+                            quizLink.setAttribute('href', "quizzes/" + quiz.id);
+                            quizLink.innerText =  quiz.title;
+                            quizListDiv.appendChild(quizLink);
+                        }))
+                    }
+                });
         }
     }
     const search = e => {

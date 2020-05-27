@@ -1,5 +1,7 @@
 package com.wap.quizit.service.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 
@@ -7,7 +9,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Value
-@Builder
+@JsonDeserialize(builder = AnswerDTO.Builder.class)
+@Builder(builderClassName = "Builder", toBuilder = true)
 public class AnswerDTO {
 
   @NotNull Long id;
@@ -19,4 +22,8 @@ public class AnswerDTO {
   @NotNull Integer pointsCount;
 
   @NotNull Long question;
+
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class Builder {
+  }
 }

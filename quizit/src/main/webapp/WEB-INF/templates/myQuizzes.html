@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Quiz IT</title>
     <style>
         * {margin-left: auto;
             margin-right: auto;
@@ -22,15 +25,17 @@
             color: #2a99f5;
             border:none;}
         nav li button:hover{cursor: pointer;}
+        .quiz-list-span {height: 100px; width: 100px; background-color: #2a99f5; color: #fff; margin: 10px; display: inline-block}
+        .introduction{color: #2a99f5}
+        #search-form{color: #2a99f5}
         button {background-color: #fff;
             color: #2a99f5;
             border-color: #2a99f5;}
         button:focus{outline: #227dc7;}
         button:hover{cursor: pointer}
-        .introduction{color: #2a99f5; margin-top: 10px; margin-bottom: 10px}
-        #attempt-details-list{color: #2a99f5;}
     </style>
 </head>
+
 <body>
 <nav>
     <ul>
@@ -44,15 +49,16 @@
     </ul>
 </nav>
 
-<h1 class="introduction">Attempt summary</h1>
-<ul id="attempt-details-list">
-    <li id="time-attempted"></li>
-    <li id="points-gained"></li>
-    <li id="max-points"></li>
-</ul>
+<h1 class="introduction">These are your quizzes.</h1>
 
+<div id="quiz-list-div" class="for-validated" style="display: none">
+    <h1 class="introduction">My quizzes:</h1>
+    <div id="quiz-list">
 
+    </div>
+</div>
 </body>
+
 <script>
     const apiURL = "http://localhost:8080/api/";
     let user = {};
@@ -79,26 +85,31 @@
     }
     validateUser();
 
-    const attemptId = window.location.pathname.substr(10);
+    const populateQuizzes = () => {
+        const quizListDiv = document.querySelector("#quiz-list");
+        quizListDiv.innerHTML= '';
 
-    fetch(apiURL + "quizzes_attempts/id/"+attemptId+"/summary")
-    .then(res => {
-        if(!res.ok) {throw res}
-        return res.json()
-    })
-    .then(res => {
-        const titleElement = document.querySelector('title');
-        titleElement.innerText = 'Attempt no.' + res.attemptId;
-        const timeLi = document.querySelector('#time-attempted');
-        timeLi.innerText = 'Attempted: ' + res.attemptTime;
-        const scoreLi = document.querySelector('#points-gained');
-        scoreLi.innerText = 'Points gained: ' + res.pointsGained;
-        const maxPointsLi = document.querySelector('#max-points');
-        maxPointsLi.innerText = 'Max points: ' + res.maxPointsCount;
-    })
-    .catch(err => {
-        console.log(err);
-        alert('Something went wrong');
-    })
+            fetch(apiURL + "quizzes/author/" + user.id + "?include_private=true")
+                .then(res => res.json())
+                .then(res => {
+                    if(res[0]) {
+                        res.forEach((quiz => {
+                            const quizLink = document.createElement('a');
+                            quizLink.setAttribute('class', 'quiz-list-span');
+                            quizLink.setAttribute('href', "quizzes/" + quiz.id);
+                            quizLink.innerText =  quiz.title;
+                            quizListDiv.appendChild(quizLink);
+                        }))
+                    } else {
+                        const noQuizzes = document.createElement('p');
+                        noQuizzes.innerText = "You haven't created any quizzes yet";
+                        noQuizzes.style.color="#2a99f5"
+                        quizListDiv.appendChild(noQuizzes);
+                    }
+                });
+    }
+
+    populateQuizzes();
+
 </script>
 </html>

@@ -1,6 +1,5 @@
 package com.wap.quizit.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.wap.quizit.util.Constants;
 import lombok.Builder;
 import lombok.Value;
