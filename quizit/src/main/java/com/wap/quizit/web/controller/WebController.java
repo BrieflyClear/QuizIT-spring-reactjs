@@ -28,6 +28,11 @@ public class WebController {
         return "register";
     }
 
+    @GetMapping({"/myQuizzes"})
+    public String showMyQuizzes() {
+        return "myQuizzes";
+    }
+
     @GetMapping({"/quizzes/{id}"})
     public String showQuizPage(@PathVariable String id) {
         return "quiz";

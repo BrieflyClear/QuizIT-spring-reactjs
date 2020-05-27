@@ -7,38 +7,52 @@
         * {margin-left: auto;
             margin-right: auto;
             text-align: center;
-            padding: 3px;}
-        nav {background-color: #fafafa;
+            padding: 3px;
+            font-family: "Segoe UI"}
+        nav {background-color: #2a99f5;
             border:1px solid #aaa;
-            padding: 15px;}
-        ul {list-style: none;
+            padding: 15px;
+            color: #fff;}
+        nav ul {list-style: none;
             text-align: center;}
-        li {display: inline-block;
+        nav li {display: inline-block;
             margin-right: 20px;}
-        li a {color: #000;}
+        a {color: #fff;}
+        nav li button{background-color: #fff;
+            color: #2a99f5;
+            border:none;}
+        nav li button:hover{cursor: pointer;}
+        .introduction{color: #2a99f5; margin-top: 10px; margin-bottom: 10px}
+        button {background-color: #fff;
+            color: #2a99f5;
+            border-color: #2a99f5;}
+        button:focus{outline: #227dc7;}
+        button:hover{cursor: pointer}
+        #login-form{color: #2a99f5}
     </style>
 </head>
 <body>
 <nav>
     <ul>
         <li><a href="/">Quizzes</a></li>
-        <li><a href="/add">Add</a></li>
-        <li><a href="/login">Log In</a></li>
-        <li><a href="/register">Register</a></li>
-        <button id="logout-button">Log Out</button>
-
+        <li class="for-validated" style="display: none"><a href="/add">Add</a></li>
+        <li class="for-validated" style="display: none"><a href="/myQuizzes">My Quizzes</a></li>
+        <li class="for-unvalidated" style="display: none"><a href="/login">Log In</a></li>
+        <li class="for-unvalidated" style="display: none"><a href="/register">Register</a></li>
+        <li class="for-validated" id="user-welcome" style="display: none"></li>
+        <li class="for-validated" style="display: none"><button id="logout-button">Log Out</button></li>
     </ul>
 </nav>
 
-<h1>Login here</h1>
-
-<form id="login-form">
+<h1 class="introduction">Login here</h1>
+<p class="for-validated" style="display: none">You are already logged in.</p>
+<form id="login-form" class="for-unvalidated" style="display: none; color: #2a99f5">
     <label>E-mail:
         <input type="email" id="email-input" placeholder="E-mail" />
     </label>
 
     <label>Password:
-        <input type="text" id="password-input" placeholder="Password" />
+        <input type="password" id="password-input" placeholder="Password" />
     </label>
 
     <button type="submit">Log In</button>
@@ -46,10 +60,31 @@
 </form>
 </body>
 <script>
-    const logOutButton = document.getElementById("logout-button");
-    logOutButton.addEventListener('click', () => localStorage.removeItem('user'));
+    const apiURL = "http://localhost:8080/api/";
+    let user = {};
+    const validateUser = () => {
+        user = {...JSON.parse(localStorage.getItem('user'))};
+        if(user.id) {
+            const forValidatedElements = document.querySelectorAll(".for-validated");
+            forValidatedElements.forEach(element => {
+                element.style.display= 'inline';
+            });
+            const userWelcome = document.getElementById("user-welcome");
+            userWelcome.innerText = "Hello\xa0" + user.username;
+            const logOutButton = document.getElementById("logout-button");
+            logOutButton.addEventListener('click', () => {
+                localStorage.removeItem('user');
+                window.location = '/';
+            });
+        } else {
+            const forUnValidatedElements = document.querySelectorAll(".for-unvalidated");
+            forUnValidatedElements.forEach(element => {
+                element.style.display= 'inline';
+            });
+        }
+    }
+    validateUser();
 
-    const apiURL = "http://quizit-europe.herokuapp.com/api/";
     const loginForm = document.querySelector("#login-form");
 
     const handleLoginSubmit = e => {
@@ -70,8 +105,10 @@
                 return res.json()
             })
             .then(res => {
-                alert('Successfully logged in');
                 localStorage.setItem('user', JSON.stringify({"id": res.id, "username": res.username, "isPremium": res.isPremium}));
+                setTimeout(() => {
+                    window.location='/';
+                }, 1000);
             })
             .catch(err => {
                 console.log(err);
