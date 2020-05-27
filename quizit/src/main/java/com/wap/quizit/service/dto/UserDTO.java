@@ -1,5 +1,7 @@
 package com.wap.quizit.service.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.wap.quizit.util.Constants;
 import lombok.Builder;
 import lombok.Value;
@@ -11,7 +13,8 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Value
-@Builder
+@JsonDeserialize(builder = UserDTO.Builder.class)
+@Builder(builderClassName = "Builder", toBuilder = true)
 public class UserDTO {
 
   @NotNull Long id;
@@ -30,4 +33,8 @@ public class UserDTO {
   @NotNull List<Long> comments;
 
   @NotNull List<Long> reportsIssued;
+
+  @JsonPOJOBuilder(withPrefix = "")
+  public static class Builder {
+  }
 }
